@@ -8,7 +8,7 @@ output:
     
 ---
 
-```{r setup, include=FALSE, cache=TRUE}
+```{r setup, include=FALSE}
 library(flexdashboard)
 library(ggplot2)
 library(cowplot)
@@ -215,7 +215,6 @@ Row {.tabset .tabset-fade}
 -------------------------------------
    
 ### Bare Substrate 
-```{r,cache=TRUE}
 Coverdata1 <- subset(Coverdata.abundant,Shortname=="aBareRock")
 ggplot(subset(Coverdata1,typesOFanalysis=="9000 manual annotations"|typesOFanalysis=="Visual"|typesOFanalysis=="Fully Automated Annotations"),aes(x=strata,y=value.mean,fill=typesOFanalysis)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=value.mean-value.SE, ymax=value.mean+value.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGHT","MID","LOW")) + facet_grid(Shortname~site) + labs(fill = "Method",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + theme(legend.position = "bottom")
 
@@ -225,7 +224,7 @@ ggscatter(correlations, x = "aBareRock", y = "aBareRock.A", add = "reg.line") +
 ```   
  
 ### Mejillones
-```{r,cache=TRUE}
+```{r}
 Coverdata2 <- subset(Coverdata.abundant,Shortname=="MEJI")
 ggplot(subset(Coverdata2,typesOFanalysis=="9000 manual annotations"|typesOFanalysis=="Visual"|typesOFanalysis=="Fully Automated Annotations"),aes(x=strata,y=value.mean,fill=typesOFanalysis)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=value.mean-value.SE, ymax=value.mean+value.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGHT","MID","LOW")) + facet_grid(Shortname~site) + labs(fill = "Method",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + theme(legend.position = "bottom")
 
@@ -235,7 +234,7 @@ ggscatter(correlations, x = "MEJI", y = "MEJI.A", add = "reg.line") +
 ```
 
 ### Ulva
-```{r,cache=TRUE}
+```{r}
 Coverdata3 <- subset(Coverdata.abundant,Shortname=="ULVA")
 ggplot(subset(Coverdata3,typesOFanalysis=="9000 manual annotations"|typesOFanalysis=="Visual"|typesOFanalysis=="Fully Automated Annotations"),aes(x=strata,y=value.mean,fill=typesOFanalysis)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=value.mean-value.SE, ymax=value.mean+value.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGHT","MID","LOW")) + facet_grid(Shortname~site) + labs(fill = "Method",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + theme(legend.position = "bottom")
 
@@ -246,7 +245,7 @@ ggscatter(correlations, x = "ULVA", y = "ULVA.A", add = "reg.line") +
 ```
 
 ### Enteromorpha
-```{r,cache=TRUE}
+```{r}
 Coverdata4 <- subset(Coverdata.abundant,Shortname=="ENTEROMORP")
 ggplot(subset(Coverdata4,typesOFanalysis=="9000 manual annotations"|typesOFanalysis=="Visual"|typesOFanalysis=="Fully Automated Annotations"),aes(x=strata,y=value.mean,fill=typesOFanalysis)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=value.mean-value.SE, ymax=value.mean+value.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGHT","MID","LOW")) + facet_grid(Shortname~site) + labs(fill = "Method",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + theme(legend.position = "bottom")
 
@@ -256,7 +255,7 @@ ggscatter(correlations, x = "ENTEROMORP", y = "ENTEROMORP.A", add = "reg.line") 
 ```
 
 ### Corallinas 
-```{r,cache=TRUE}
+```{r}
 Coverdata5 <- subset(Coverdata.abundant,Shortname=="COC")
 ggplot(subset(Coverdata5,typesOFanalysis=="9000 manual annotations"|typesOFanalysis=="Visual"|typesOFanalysis=="Fully Automated Annotations"),aes(x=strata,y=value.mean,fill=typesOFanalysis)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=value.mean-value.SE, ymax=value.mean+value.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGHT","MID","LOW")) + facet_grid(Shortname~site) + labs(fill = "Method",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + theme(legend.position = "bottom")
 
