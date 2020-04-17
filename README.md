@@ -10,4 +10,4 @@ Data files as download from CoralNet:
 CoralNet Source: https://coralnet.ucsd.edu/source/1829/
 
 
-[](/view_example.png)
+
