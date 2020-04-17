@@ -215,6 +215,7 @@ Row {.tabset .tabset-fade}
 -------------------------------------
    
 ### Bare Substrate 
+```{r}
 Coverdata1 <- subset(Coverdata.abundant,Shortname=="aBareRock")
 ggplot(subset(Coverdata1,typesOFanalysis=="9000 manual annotations"|typesOFanalysis=="Visual"|typesOFanalysis=="Fully Automated Annotations"),aes(x=strata,y=value.mean,fill=typesOFanalysis)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=value.mean-value.SE, ymax=value.mean+value.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGHT","MID","LOW")) + facet_grid(Shortname~site) + labs(fill = "Method",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + theme(legend.position = "bottom")
 
