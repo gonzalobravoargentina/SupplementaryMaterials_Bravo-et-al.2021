@@ -265,7 +265,7 @@ ggscatter(correlations, x = "COC", y = "COC.A", add = "reg.line") +
   stat_cor(label.x = 3, label.y = 100)
 ```
 
-Punta Cuevas 2018 vs 2019 {data-orientation=Columns} 
+PC 2018 vs 2019 {data-orientation=Columns} 
 =====================================  
 
 
