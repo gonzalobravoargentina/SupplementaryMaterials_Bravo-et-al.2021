@@ -298,7 +298,34 @@ Column2 {.tabset .tabset-fade}
 ### All sites {data-width=150}
 ```{r}
 Coverdata.abundant2 <- subset(Coverdata.strata,Shortname=="aBareRock" |Shortname=="MEJI"|Shortname=="ENTEROMORP"|Shortname=="COC"|Shortname=="FILA"|Shortname=="ULVA"|Shortname=="CIRRIPEDIO")
-puntacuevas <- subset(Coverdata.abundant2, typesOFanalysis=="Auto" | typesOFanalysis=="Alleviate 60%")
-ggplot(puntacuevas,aes(x=strata,y=value.mean,fill=Shortname)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=value.mean-value.SE, ymax=value.mean+value.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGHT","MID","LOW")) +scale_fill_brewer(palette="Paired",name = "Taxa",labels = c("Sustrato desnudo","Cirripedios","Algas coralinas","Enteromopha","Algas filamentosas","Mejillones","Ulva")) + labs(fill = "SPP",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + theme(legend.position = "bottom") + facet_grid(site~year)
+allsites <- subset(Coverdata.abundant2, typesOFanalysis=="Auto" | typesOFanalysis=="Alleviate 60%")
+ggplot(allsites,aes(x=strata,y=value.mean,fill=Shortname)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=value.mean-value.SE, ymax=value.mean+value.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGHT","MID","LOW")) +scale_fill_brewer(palette="Paired",name = "Taxa",labels = c("Sustrato desnudo","Cirripedios","Algas coralinas","Enteromopha","Algas filamentosas","Mejillones","Ulva")) + labs(fill = "SPP",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + theme(legend.position = "bottom") + facet_grid(site~year)
+
+```
+
+
+### Punta Cuevas {data-width=150}
+```{r}
+Coverdata.abundant2 <- subset(Coverdata.strata,Shortname=="aBareRock" |Shortname=="MEJI"|Shortname=="ENTEROMORP"|Shortname=="COC"|Shortname=="FILA"|Shortname=="ULVA"|Shortname=="CIRRIPEDIO")
+allsites <- subset(Coverdata.abundant2, typesOFanalysis=="Auto" | typesOFanalysis=="Alleviate 60%")
+ggplot(subset(allsites,site=="PUNTA CUEVAS"),aes(x=strata,y=value.mean,fill=Shortname)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=value.mean-value.SE, ymax=value.mean+value.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGHT","MID","LOW")) +scale_fill_brewer(palette="Paired",name = "Taxa",labels = c("Sustrato desnudo","Cirripedios","Algas coralinas","Enteromopha","Algas filamentosas","Mejillones","Ulva")) + labs(fill = "SPP",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + theme(legend.position = "bottom") + facet_grid(site~year)
+
+```
+
+
+### Punta Este {data-width=150}
+```{r}
+Coverdata.abundant2 <- subset(Coverdata.strata,Shortname=="aBareRock" |Shortname=="MEJI"|Shortname=="ENTEROMORP"|Shortname=="COC"|Shortname=="FILA"|Shortname=="ULVA"|Shortname=="CIRRIPEDIO")
+allsites <- subset(Coverdata.abundant2, typesOFanalysis=="Auto" | typesOFanalysis=="Alleviate 60%")
+ggplot(subset(allsites,site=="PUNTA ESTE"),aes(x=strata,y=value.mean,fill=Shortname)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=value.mean-value.SE, ymax=value.mean+value.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGHT","MID","LOW")) +scale_fill_brewer(palette="Paired",name = "Taxa",labels = c("Sustrato desnudo","Cirripedios","Algas coralinas","Enteromopha","Algas filamentosas","Mejillones","Ulva")) + labs(fill = "SPP",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + theme(legend.position = "bottom") + facet_grid(site~year)
+
+```
+
+
+### Punta Loma {data-width=150}
+```{r}
+Coverdata.abundant2 <- subset(Coverdata.strata,Shortname=="aBareRock" |Shortname=="MEJI"|Shortname=="ENTEROMORP"|Shortname=="COC"|Shortname=="FILA"|Shortname=="ULVA"|Shortname=="CIRRIPEDIO")
+allsites <- subset(Coverdata.abundant2, typesOFanalysis=="Auto" | typesOFanalysis=="Alleviate 60%")
+ggplot(subset(allsites,site=="PUNTA LOMA"),aes(x=strata,y=value.mean,fill=Shortname)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=value.mean-value.SE, ymax=value.mean+value.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGHT","MID","LOW")) +scale_fill_brewer(palette="Paired",name = "Taxa",labels = c("Sustrato desnudo","Cirripedios","Algas coralinas","Enteromopha","Algas filamentosas","Mejillones","Ulva")) + labs(fill = "SPP",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + theme(legend.position = "bottom") + facet_grid(site~year)
 
 ```
