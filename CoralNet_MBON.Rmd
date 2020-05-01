@@ -53,12 +53,14 @@ Coverdata.abundant <- subset(Coverdata.strata,Shortname=="aBareRock" |Shortname=
 Coverdata.abundant <- subset(Coverdata.abundant,year!="2019")
 
 #Change levels names
-levels(Coverdata.abundant$typesOFanalysis)
-levels(Coverdata.abundant$typesOFanalysis) <-  c("Alleviate 60%", "Alleviate 80%","Fully Automated Annotations", "9000 manual annotations","Visual")
+Coverdata.abundant$typesOFanalysis <- as.factor(Coverdata.abundant$typesOFanalysis)
+levels(Coverdata.abundant$typesOFanalysis) <-  c("Alleviate 60%", "Alleviate 80%","Fully Automated Annotations","9000 manual annotations","Visual")
 
 
 #Data of %cover estimated visual and by robot for correlations analysis
 correlations <- read.csv("percent_covers_correlations.csv")
+
+
 ```
 
 Photo vs Visual General 
@@ -85,22 +87,30 @@ ggplot(subset(Coverdata.abundant,typesOFanalysis=="9000 manual annotations"|type
 
 ```
 
-###Punta Cuevas 
+
+### Punta Cuevas 
 ```{r}
+
 puntacuevas <- subset(Coverdata.abundant,site=="PUNTA CUEVAS")
-ggplot(subset(puntacuevas,typesOFanalysis=="9000 manual annotations"|typesOFanalysis=="Visual"),aes(x=strata,y=value.mean,fill=Shortname)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=value.mean-value.SE, ymax=value.mean+value.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGHT","MID","LOW")) +scale_fill_brewer(palette="Paired",name = "Taxa",labels = c("Sustrato desnudo","Cirripedios","Algas coralinas","Enteromopha","Algas filamentosas","Mejillones","Ulva")) + labs(fill = "SPP",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + facet_grid(~typesOFanalysis)
+ggplot(subset(puntacuevas,typesOFanalysis=="9000 manual annotations"|typesOFanalysis=="Visual"),aes(x=strata,y=value.mean,fill=Shortname)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=value.mean-value.SE, ymax=value.mean+value.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGHT","MID","LOW")) +scale_fill_brewer(palette="Paired",name = "Taxa",labels = c("Sustrato desnudo","Cirripedios","Algas coralinas","Enteromopha","Algas filamentosas","Mejillones","Ulva")) + labs(fill = "SPP",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + facet_grid(site~typesOFanalysis)
+
 ```   
 
-###Punta Este 
+
+### Punta Este 
 ```{r}
-puntacuevas <- subset(Coverdata.abundant,site=="PUNTA ESTE")
-ggplot(subset(puntacuevas,typesOFanalysis=="9000 manual annotations"|typesOFanalysis=="Visual"),aes(x=strata,y=value.mean,fill=Shortname)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=value.mean-value.SE, ymax=value.mean+value.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGHT","MID","LOW")) +scale_fill_brewer(palette="Paired",name = "Taxa",labels = c("Sustrato desnudo","Cirripedios","Algas coralinas","Enteromopha","Algas filamentosas","Mejillones","Ulva")) + labs(fill = "SPP",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + facet_grid(~typesOFanalysis)
+puntaeste <- subset(Coverdata.abundant,site=="PUNTA ESTE")
+ggplot(subset(puntaeste,typesOFanalysis=="9000 manual annotations"|typesOFanalysis=="Visual"),aes(x=strata,y=value.mean,fill=Shortname)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=value.mean-value.SE, ymax=value.mean+value.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGHT","MID","LOW")) +scale_fill_brewer(palette="Paired",name = "Taxa",labels = c("Sustrato desnudo","Cirripedios","Algas coralinas","Enteromopha","Algas filamentosas","Mejillones","Ulva")) + labs(fill = "SPP",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + facet_grid(~typesOFanalysis)
+
 ```   
 
-###Punta Loma
+
+### Punta Loma
 ```{r}
-puntacuevas <- subset(Coverdata.abundant,site=="PUNTA LOMA")
-ggplot(subset(puntacuevas,typesOFanalysis=="9000 manual annotations"|typesOFanalysis=="Visual"),aes(x=strata,y=value.mean,fill=Shortname)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=value.mean-value.SE, ymax=value.mean+value.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGHT","MID","LOW")) +scale_fill_brewer(palette="Paired",name = "Taxa",labels = c("Sustrato desnudo","Cirripedios","Algas coralinas","Enteromopha","Algas filamentosas","Mejillones","Ulva")) + labs(fill = "SPP",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + facet_grid(~typesOFanalysis)
+
+puntaloma <- subset(Coverdata.abundant,site=="PUNTA LOMA")
+ggplot(subset(puntaloma,typesOFanalysis=="9000 manual annotations"|typesOFanalysis=="Visual"),aes(x=strata,y=value.mean,fill=Shortname)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=value.mean-value.SE, ymax=value.mean+value.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGHT","MID","LOW")) +scale_fill_brewer(palette="Paired",name = "Taxa",labels = c("Sustrato desnudo","Cirripedios","Algas coralinas","Enteromopha","Algas filamentosas","Mejillones","Ulva")) + labs(fill = "SPP",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + facet_grid(~typesOFanalysis)
+
 ```   
 
 Photo vs Visual by taxa {data-orientation=rows} 
@@ -176,25 +186,26 @@ ggplot(subset(Coverdata.abundant,typesOFanalysis=="9000 manual annotations"|type
 
 ```
 
-###Auto vs Visual 
+### Auto vs Visual 
 ```{r}
-
 ggplot(subset(Coverdata.abundant,typesOFanalysis=="Fully Automated Annotations"|typesOFanalysis=="Visual"),aes(x=strata,y=value.mean,fill=Shortname)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=value.mean-value.SE, ymax=value.mean+value.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGHT","MID","LOW")) +scale_fill_brewer(palette="Paired",name = "Taxa",labels = c("Sustrato desnudo","Cirripedios","Algas coralinas","Enteromopha","Algas filamentosas","Mejillones","Ulva")) + labs(fill = "SPP",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + theme(legend.position = "bottom") + facet_grid(site~typesOFanalysis)
+
 ```   
 
-###Auto vs Manual 
+### Auto vs Manual 
 ```{r}
 ggplot(subset(Coverdata.abundant,typesOFanalysis=="9000 manual annotations"|typesOFanalysis=="Fully Automated Annotations"),aes(x=strata,y=value.mean,fill=Shortname)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=value.mean-value.SE, ymax=value.mean+value.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGHT","MID","LOW")) +scale_fill_brewer(palette="Paired",name = "Taxa",labels = c("Sustrato desnudo","Cirripedios","Algas coralinas","Enteromopha","Algas filamentosas","Mejillones","Ulva")) + labs(fill = "SPP",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + theme(legend.position = "bottom") + facet_grid(site~typesOFanalysis)
+
 ```   
 
-###Different levels robots 
+### Different levels robots 
 ```{r}
 ggplot(subset(Coverdata.abundant,typesOFanalysis=="Alleviate 60%"|typesOFanalysis=="Alleviate 80%"|typesOFanalysis=="Fully Automated Annotations"),aes(x=strata,y=value.mean,fill=Shortname)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=value.mean-value.SE, ymax=value.mean+value.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGHT","MID","LOW")) +scale_fill_brewer(palette="Paired",name = "Taxa",labels = c("Sustrato desnudo","Cirripedios","Algas coralinas","Enteromopha","Algas filamentosas","Mejillones","Ulva")) + labs(fill = "SPP",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + theme(legend.position = "bottom") + facet_grid(site~typesOFanalysis)
+
 ```   
 
 ### Auto vs Manual vs Visual (Punta Loma)
 ```{r}
-puntaloma <- subset(Coverdata.abundant,site=="PUNTA LOMA")
 ggplot(subset(puntaloma,typesOFanalysis=="9000 manual annotations"|typesOFanalysis=="Fully Automated Annotations"|typesOFanalysis=="Visual"),aes(x=strata,y=value.mean,fill=Shortname)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=value.mean-value.SE, ymax=value.mean+value.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGHT","MID","LOW")) +scale_fill_brewer(palette="Paired",name = "Taxa",labels = c("Sustrato desnudo","Cirripedios","Algas coralinas","Enteromopha","Algas filamentosas","Mejillones","Ulva")) + labs(fill = "SPP",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + theme(legend.position = "bottom") + facet_grid(site~typesOFanalysis)
 
 ```
@@ -276,7 +287,7 @@ Methods:
 
 - There was a disappearance of Mussels in 2019 
 
-- Punta Cuevas Photos from 2019 were analyzed with 60% alleviate 
+- Punta Cuevas Photos from 2019 were analyzed fully automated  
 
 - Bars represent mean + SE
 
@@ -284,10 +295,10 @@ Methods:
 Column2 {.tabset .tabset-fade}
 -------
 
-### Punta Cuevas {data-width=150}
+### All sites {data-width=150}
 ```{r}
 Coverdata.abundant2 <- subset(Coverdata.strata,Shortname=="aBareRock" |Shortname=="MEJI"|Shortname=="ENTEROMORP"|Shortname=="COC"|Shortname=="FILA"|Shortname=="ULVA"|Shortname=="CIRRIPEDIO")
-puntacuevas <- subset(Coverdata.abundant2, site=="PUNTA CUEVAS" & typesOFanalysis=="Alleviate 60%")
-ggplot(puntacuevas,aes(x=strata,y=value.mean,fill=Shortname)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=value.mean-value.SE, ymax=value.mean+value.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGHT","MID","LOW")) +scale_fill_brewer(palette="Paired",name = "Taxa",labels = c("Sustrato desnudo","Cirripedios","Algas coralinas","Enteromopha","Algas filamentosas","Mejillones","Ulva")) + labs(fill = "SPP",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + theme(legend.position = "bottom") + facet_grid(~year)
+puntacuevas <- subset(Coverdata.abundant2, typesOFanalysis=="Auto" | typesOFanalysis=="Alleviate 60%")
+ggplot(puntacuevas,aes(x=strata,y=value.mean,fill=Shortname)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=value.mean-value.SE, ymax=value.mean+value.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGHT","MID","LOW")) +scale_fill_brewer(palette="Paired",name = "Taxa",labels = c("Sustrato desnudo","Cirripedios","Algas coralinas","Enteromopha","Algas filamentosas","Mejillones","Ulva")) + labs(fill = "SPP",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + theme(legend.position = "bottom") + facet_grid(site~year)
 
 ```
