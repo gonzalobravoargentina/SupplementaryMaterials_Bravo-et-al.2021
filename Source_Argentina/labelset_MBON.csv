@@ -1,0 +1,28 @@
+Name,Short Code,Label ID,Functional Group
+Ascidians,A,4762,Other Invertebrates
+Bryozoan,BRY,1853,Other Invertebrates
+Cnidaria: Colonial anemones,CNCA,4773,Other Invertebrates
+Cnidaria: True anemones,CNTR,4774,Other Invertebrates
+Crustacea: Barnacles,CRB,357,Other Invertebrates
+Echinoderms: Sea stars,ESS,344,Other Invertebrates
+Echinoderms: sea urchin,ESU,342,Other Invertebrates
+Molluscs: Bivalves,MOB,355,Other Invertebrates
+Molluscs: Chitons,MOCH,354,Other Invertebrates
+Molluscs: Gastropods,MOG,353,Other Invertebrates
+Sponge,SP,102,Other Invertebrates
+Worms: Polychaetes: Tube worms,WPOT,361,Other Invertebrates
+Substrate: Unconsolidated (soft),SU,4115,Soft Substrate
+Substrate: Consolidated (hard),SC,4114,Hard Substrate
+Verrucaria,LICHEN,4719,Other
+Shadow,SHAD,222,Other
+Unclear,Unc,118,Other
+Macroalgae: Articulated calcareous,MAA,325,Algae
+Macroalgae: Erect coarse branching,MAEC,317,Algae
+Macroalgae: Erect fine branching,MAEF,313,Algae
+Macroalgae: Encrusting,MAEN,321,Algae
+Macroalgae: Encrusting: red,MAENR,322,Algae
+Macroalgae: Filamentous / filiform,MAF,309,Algae
+Macroalgae: Globose / saccate,MAG,305,Algae
+Macroalgae: Laminate,MALA,301,Algae
+Macroalgae: Large canopy-forming : brown,MALCB,299,Algae
+Macroalgae: Sheet-like / membraneous,MAS,294,Algae
