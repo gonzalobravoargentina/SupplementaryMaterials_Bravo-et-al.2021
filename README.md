@@ -1,15 +1,46 @@
 # CoralNet_MBON
  R codes and data files : "Machine learning applications to monitor marine Essential Biodiversity Variables of rocky shore communities"
 
-Data files:
-- MBON_Argentina_metadata_2018.csv (#Date,country,locality,site,strata info)
-- MBON_Argentina_percent_covers_2018.csv (percent cover photoquadrats n= 241)
-- MBON_Argentina_annotations_2018.csv (info of the robot estimations)
-- MBON_Argentina_percent_cover_visual_2018.csv (data from visual quadrats)
-- labelset_MBON.csv (List of CATAMI categories used on the source)
+## Folders:
 
+#### Visual_quadrats 
+- argentina_visual.csv
+- colombia_visual.csv
+- galapagos_visula.csv
 
-CoralNet Source: https://coralnet.ucsd.edu/source/1895/
+#### Source_MBON_P2P
+- annotations.csv
+- metadata.csv
+- percent_cover.csv
 
+CoralNet Source: https://coralnet.ucsd.edu/source/1972/
 
+#### Source_Galapagos
+- annotations.csv
+- metadata.csv
+- percent_cover.csv
+
+CoralNet Source: https://coralnet.ucsd.edu/source/1949/
+
+#### Source_Colombia
+- annotations.csv
+- metadata.csv
+- percent_cover.csv
+
+CoralNet Source: https://coralnet.ucsd.edu/source/1983/
+
+#### Source_Argentina
+- annotations.csv
+- metadata.csv
+- percent_cover.csv
+
+CoralNet Source: https://coralnet.ucsd.edu/source/1988/
+
+#### Figures
+- Plots
+
+#### Labelset
+- labelset_used.csv
+- labelset.csv
+- lLABELSET_MBON.xlsx
 
