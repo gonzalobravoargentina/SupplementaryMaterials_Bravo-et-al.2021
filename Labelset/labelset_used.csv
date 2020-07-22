@@ -1,0 +1,16 @@
+Name,Short Code,Functional Group,Label ID 
+Cnidaria: Colonial anemones,CNCA,Other Invertebrates,4773
+Cnidaria: True anemones,CNTR,Other Invertebrates,4774
+Crustacea: Barnacles,CRB,Other Invertebrates,357
+Molluscs: Bivalves,MOB,Other Invertebrates,355
+Molluscs: Gastropods,MOG,Other Invertebrates,353
+Sponge,SP,Other Invertebrates,102
+Worms: Polychaetes: Tube worms,WPOT,Other Invertebrates,361
+Substrate: Consolidated (hard),SC,Hard Substrate,4114
+Unclear,Unc,Other,118
+Macroalgae: Articulated calcareous,MAA,Algae,325
+Macroalgae: Encrusting,MAEN,Algae,321
+Macroalgae: Filamentous / filiform,MAF,Algae,309
+Macroalgae: Globose / saccate,MAG,Algae,305
+Macroalgae: Large canopy-forming : brown,MALCB,Algae,299
+Macroalgae: Sheet-like / membraneous,MAS,Algae,294
