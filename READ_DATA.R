@@ -6,7 +6,7 @@
 #Visual quadrats folder has results from insitu "visual_quadrats"
 # argentina_visual.csd
 # colombia_visual.csv
-# argentina_visula.csv
+# galapagos_visula.csv
 
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
