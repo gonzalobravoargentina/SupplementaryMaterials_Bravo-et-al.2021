@@ -1,16 +1,16 @@
-Name,Short Code,Functional Group,Label ID 
-Cnidaria: Colonial anemones,CNCA,Other Invertebrates,4773
-Cnidaria: True anemones,CNTR,Other Invertebrates,4774
-Crustacea: Barnacles,CRB,Other Invertebrates,357
-Molluscs: Bivalves,MOB,Other Invertebrates,355
-Molluscs: Gastropods,MOG,Other Invertebrates,353
-Sponge,SP,Other Invertebrates,102
-Worms: Polychaetes: Tube worms,WPOT,Other Invertebrates,361
-Substrate: Consolidated (hard),SC,Hard Substrate,4114
-Unclear,Unc,Other,118
-Macroalgae: Articulated calcareous,MAA,Algae,325
-Macroalgae: Encrusting,MAEN,Algae,321
-Macroalgae: Filamentous / filiform,MAF,Algae,309
-Macroalgae: Globose / saccate,MAG,Algae,305
-Macroalgae: Large canopy-forming : brown,MALCB,Algae,299
-Macroalgae: Sheet-like / membraneous,MAS,Algae,294
+Name,Short Code,Functional Group,ID CoralNet,ID CATAMI
+Cnidaria: Colonial anemones,CNCA,Other Invertebrates,4773,11500901
+Cnidaria: True anemones,CNTR,Other Invertebrates,4774,11229000
+Crustacea: Barnacles,CRB,Other Invertebrates,357,27500000
+Molluscs: Bivalves,MOB,Other Invertebrates,355,23199000
+Molluscs: Gastropods,MOG,Other Invertebrates,353,24000000
+Sponge,SP,Other Invertebrates,102,10000000
+Worms: Polychaetes: Tube worms,WPOT,Other Invertebrates,361,22000901
+Substrate: Consolidated (hard),SC,Hard Substrate,4114,82001001
+Unclear,Unc,Other,118,
+Macroalgae: Articulated calcareous,MAA,Algae,325,80300911
+Macroalgae: Encrusting,MAEN,Algae,321,80300926
+Macroalgae: Filamentous / filiform,MAF,Algae,309,80300930
+Macroalgae: Globose / saccate,MAG,Algae,305,80300914
+Macroalgae: Large canopy-forming : brown,MALCB,Algae,299,80300902
+Macroalgae: Sheet-like / membraneous,MAS,Algae,294,80300922
