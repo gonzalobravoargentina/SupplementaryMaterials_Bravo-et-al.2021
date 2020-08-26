@@ -6,7 +6,8 @@
 #### Visual_quadrats 
 - argentina_visual.csv
 - colombia_visual.csv
-- galapagos_visula.csv
+- galapagos_visual.csv
+- usa_visual.csv
 
 #### Source_MBON_P2P
 - annotations.csv
