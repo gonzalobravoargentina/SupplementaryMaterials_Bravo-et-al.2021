@@ -1,0 +1,155 @@
+---
+title: "Results MBON_CORALNET"
+author: "Gonzalo Bravo"
+date: "8/26/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r message=FALSE, warning=FALSE, code=readLines("READ_DATA.R"), include=FALSE}
+library(ggplot2)
+```
+
+# Objetives
+- Test unsupervised configuration of the CoralNet software to identify CATAMI categories on intertidal photoquadrats from sampling sites of MBON.
+- Provide a fast method to detect changes on intertidal habitats, using photoquadrats analysided by artificial intelligence (AI).
+
+# Methods 
+Photoquadrats from 4 locations with 90 quadrats per location were used for testing automated annotations form the CoralNet software and results were compared with visual quadrats. 
+
+# Workflow 
+1- 90 quadrats/site were visually inspected in situ with a 100 point grid ("Visualquadrat").
+
+2- 90 photoquadrats/site were annotated by experts using a 100 points grid in CoralNet ("Human").
+
+3- The 90 photoquadrats/site of point (1) were re-annotated by the experts using 100 random points. These annotations were used for training the automatic annotator of CoralNet using a diferent set of points than photoquadrats in point (2).
+
+3- 90 photoquadrats/site were automatically annotated by the CoralNet robot using 100 points grid ("Robot").
+
+4- 90 photoquadrats/site were automatically annotated by the CoralNet robot using 100 points grid (same photos than in points 2 and 3) but using one independent robot for each site ("Robot.bycountry"). 
+
+\pagebreak
+
+# FUNCTIONAL GROUPS RESULTS
+```{r plot1, echo=FALSE,fig.height = 10, fig.width = 10, fig.align = "center"}
+ggplot(Coverdata.FG,aes(x=strata,y=cover.mean,fill=Comments)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=cover.mean-cover.SE, ymax=cover.mean+cover.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGH","MID","LOW")) + facet_grid(country~CATAMI) + labs(fill = "Method",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + theme(legend.position = "bottom",panel.grid.major = element_blank(),panel.grid.minor = element_blank(),panel.background = element_blank()) + scale_fill_brewer(palette="Dark2")
+```
+
+\pagebreak
+
+## CATAMI list
+```{r CATAMIlistdefinition, echo=FALSE, message=FALSE, warning=FALSE}
+knitr::kable(labelset)
+```
+
+
+```{r plot4, echo=FALSE, fig.height = 10, fig.width = 10, fig.align = "center"}
+ggplot(Coverdata_abundant,aes(x=strata,y=cover.mean,fill=Comments)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=cover.mean-cover.SE, ymax=cover.mean+cover.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGH","MID","LOW")) + facet_grid(country~CATAMI) + labs(fill = "Method",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + theme(legend.position = "bottom",panel.grid.major = element_blank(),panel.grid.minor = element_blank(),panel.background = element_blank())  + scale_fill_brewer(palette="Dark2")
+```
+
+\pagebreak
+
+## BOXPLOT
+```{r plot5, echo=FALSE,fig.height = 10, fig.width = 10, fig.align = "center"}
+ggplot(data=photoquadrat_visual_long.FG, mapping=aes(x=strata, y=cover,fill=Comments)) +geom_boxplot()   + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGH","MID","LOW")) + facet_grid(country~CATAMI) + labs(fill = "Method",x = "", y = "Cover (%)", title = "") + theme(legend.position = "bottom",panel.grid.major = element_blank(),panel.grid.minor = element_blank(),panel.background = element_blank())  + scale_fill_brewer(palette="Dark2")
+```
+
+\pagebreak
+
+## COLOMBIA
+```{r plot6, echo=FALSE, fig.height = 5, fig.width = 10, fig.align = "center"}
+ggplot(subset(Coverdata_abundant,country=="COLOMBIA"& CATAMI!="MOB" & CATAMI!="MAS" & CATAMI!="MAA"),aes(x=strata,y=cover.mean,fill=Comments)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=cover.mean-cover.SE, ymax=cover.mean+cover.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGH","MID","LOW")) + facet_grid(country~CATAMI) + labs(fill = "Method",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + theme(legend.position = "bottom",panel.grid.major = element_blank(),panel.grid.minor = element_blank(),panel.background = element_blank())  + scale_fill_brewer(palette="BrBG")
+```
+
+
+## ECUADOR
+```{r plot7, echo=FALSE, fig.height = 5, fig.width = 10, fig.align = "center"}
+ggplot(subset(Coverdata_abundant,country=="ECUADOR"& CATAMI!="MOB" & CATAMI!="MAS" & CATAMI!="MAA"),aes(x=strata,y=cover.mean,fill=Comments)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=cover.mean-cover.SE, ymax=cover.mean+cover.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGH","MID","LOW")) + facet_grid(country~CATAMI) + labs(fill = "Method",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + theme(legend.position = "bottom",panel.grid.major = element_blank(),panel.grid.minor = element_blank(),panel.background = element_blank())  + scale_fill_brewer(palette="BrBG")
+```
+
+\pagebreak
+
+## ARGENTINA
+```{r plot8, echo=FALSE, fig.height = 5, fig.width = 10, fig.align = "center"}
+ggplot(subset(Coverdata_abundant,country=="ARGENTINA"),aes(x=strata,y=cover.mean,fill=Comments)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=cover.mean-cover.SE, ymax=cover.mean+cover.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGH","MID","LOW")) + facet_grid(country~CATAMI) + labs(fill = "Method",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + theme(legend.position = "bottom",panel.grid.major = element_blank(),panel.grid.minor = element_blank(),panel.background = element_blank())  + scale_fill_brewer(palette="BrBG")
+```
+
+## USA
+```{r plot9, echo=FALSE, fig.height = 5, fig.width = 10, fig.align = "center"}
+ggplot(subset(Coverdata_abundant,country=="USA"),aes(x=strata,y=cover.mean,fill=Comments)) + geom_bar(alpha=0.7,stat="identity",color="black",position=position_dodge()) + scale_color_grey() + geom_errorbar(aes(ymin=cover.mean-cover.SE, ymax=cover.mean+cover.SE), width=.2,position=position_dodge(.9)) + theme_bw() + scale_y_continuous(limits = c(0,100))+ scale_x_discrete(limits=c("HIGHTIDE","MIDTIDE","LOWTIDE"),labels=c("HIGH","MID","LOW")) + facet_grid(country~CATAMI) + labs(fill = "Method",x = "", y = "Cover (%)", title = "",caption ="Mean + SE") + theme(legend.position = "bottom",panel.grid.major = element_blank(),panel.grid.minor = element_blank(),panel.background = element_blank())  + scale_fill_brewer(palette="BrBG")
+```
+
+\pagebreak
+
+## Methods comparations
+
+```{r correlations, include=FALSE}
+library(ggpubr) 
+```
+
+```{r plot11, echo=FALSE, fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
+ggscatter(correlations, x = "SC.H", y = "SC.A", add = "reg.line",conf.int=T) +
+  labs(title="SC", y="Photo",x="Visual")+ ylim(0,100)+ xlim(0,100)+
+  stat_cor(label.x = 3, label.y = 100)
+```
+
+```{r correlations2, include=FALSE}
+library(gridExtra)
+library(gridGraphics)
+library(cowplot)
+site <- correlations$country.A
+
+#by photo
+SC<-  summaryBy(SC.A + SC.H  ~ Name ,data=correlations , FUN = mean)
+SC$site <- site
+#differenced_data= Method_A - Method_B
+SC$diff <- SC$SC.A.mean-SC$SC.H.mean
+SC$avg <- (SC$SC.A.mean + SC$SC.H.mean) / 2
+
+#by site
+SC2<-  summaryBy(SC.A + SC.H ~ country.A ,data=correlations, FUN = mean)
+SC2$diff <- SC2$SC.A.mean-SC2$SC.H.mean
+SC2$avg <- (SC2$SC.A.mean + SC2$SC.H.mean) / 2
+
+#plot by photo
+g1 <- ggplot(SC, aes(x=avg, y=diff,colour=site))+geom_hline(yintercept=0) + geom_point()+ theme_bw()+labs(y="Difference in % cover between methods", x="",title = "Substrate Consolidate")+theme(legend.position="none",plot.margin=unit(c(0,0,1,1), "cm"))
+#plot by site
+g2 <- ggplot(SC2, aes(x=avg, y=diff,colour=country.A)) + geom_point()+theme_bw() + labs(y="", x="Avg % cover of both methods (± 95%CI)") + theme(axis.title.y =element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank())+geom_hline(yintercept=0)+theme(legend.position="none",plot.margin=unit(c(0,1,1,-0.1), "cm"))+geom_errorbar(aes(ymin =c(-9.211,2.567,5.622),ymax =c(-2.978,10.746,12.367)),width = 0.2) + geom_errorbarh(aes(xmin = c(21.56,70.47,80.63),xmax = c(34.56,81.63,89.20)),height =-.2)
+
+#set y limits and brecks
+limits <- c(-30, 90)
+breaks <- seq(limits[1], limits[2], by=8)
+
+# assign common axis to both plots
+p1.common.y <- g1 + scale_y_continuous(limits=limits, breaks=breaks)
+p2.common.y <- g2 + scale_y_continuous(limits=limits, breaks=breaks)
+
+# At this point, they have the same axis, but the axis lengths are unequal, so ...
+# build the plots 
+p1.common.y <- ggplot_gtable(ggplot_build(p1.common.y))
+p2.common.y <- ggplot_gtable(ggplot_build(p2.common.y))
+
+# copy the plot height from p1 to p2
+p2.common.y$heights <- p1.common.y$heights
+#plot grid
+grid <- grid.arrange(p1.common.y,p2.common.y,ncol=2,widths=c(1,1))
+
+#add legend
+legend <- ggplot(SC, aes(x=avg, y=diff,colour=site))+geom_hline(yintercept=0) + geom_point()+ theme_bw()+labs(y="Difference in % cover between methods", x="% cover visual",title = "Bare Substrate")+theme(legend.position="top",plot.margin=unit(c(0,0,1,1), "cm"))
+legend_plot <- get_legend(legend)#take legend
+
+```
+
+```{r plot12, echo=FALSE, message=FALSE, warning=FALSE,fig.height = 5, fig.width = 6}
+plot_grid(legend_plot,grid, ncol = 1, rel_heights = c(.1,1))
+```
+
+
+
+# Code and data files 
+All the codes and data files are in github
+
+https://github.com/gonzalobravoargentina/CoralNet_MBON
