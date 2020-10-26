@@ -27,24 +27,25 @@ library(data.table)
 # Source = https://coralnet.ucsd.edu/source/1972/
 
 #Set the working directory to the folder "Source_MBON_P2P" and read percent_cover.csv and metdata.csv files (downloaded "as it" from Coralnet source)
-library(here)
-MBON.photoquadrat.cover <- read.csv(here("Source_MBON_P2P", "percent_covers.csv"))
-MBON.photoquadrat.metadata <- read.csv(here("Source_MBON_P2P", "metadata.csv"))
+#library(here)
+#MBON.photoquadrat.cover <- read.csv(here("Source_MBON_P2P", "percent_covers.csv"))
+#MBON.photoquadrat.metadata <- read.csv(here("Source_MBON_P2P", "metadata.csv"))
 
 #Merge photoquadrat.metadata and photoquadrat.cover
-MBON.photoquadrat<- merge(MBON.photoquadrat.metadata,MBON.photoquadrat.cover, by = "Name", all.x = TRUE) 
+#MBON.photoquadrat<- merge(MBON.photoquadrat.metadata,MBON.photoquadrat.cover, by = "Name", all.x = TRUE) 
 
 #CHECK wich date format you have in the files. Sometimes if you open the file with excel it may change the date format 
 #transform to date format
-MBON.photoquadrat$Date <- as.Date(MBON.photoquadrat$Date,'%Y-%m-%d')
+#MBON.photoquadrat$Date <- as.Date(MBON.photoquadrat$Date,'%Y-%m-%d')
 #MBON.photoquadrat$Date <- as.Date(MBON.photoquadrat$Date,'%d/%m/%Y')
 
 #Eliminate colums with taxa categories (CATAMI) that were not used for the photoquadrats
 #as this codes search colsum= 0 in all the data frame , and remove those columns, we need to set lat ang long that have negative numbers in order to avoid being removed
-MBON.photoquadrat$Latitude <- as.character(MBON.photoquadrat$Latitude)
-MBON.photoquadrat$Longitude <- as.character(MBON.photoquadrat$Longitude)
-library(tidyverse) 
-MBON.photoquadrat <- MBON.photoquadrat %>% select_if(negate(function(col) is.numeric(col) && sum(col) <= 0))
+#MBON.photoquadrat$Latitude <- as.character(MBON.photoquadrat$Latitude)
+#MBON.photoquadrat$Longitude <- as.character(MBON.photoquadrat$Longitude)
+#library(tidyverse) 
+#MBON.photoquadrat <- MBON.photoquadrat %>% select_if(negate(function(col) is.numeric(col) && sum(col) <= 0))
+
 
 
 #Read data SOURCE MBON_AR_CO_EC_US--------
@@ -52,36 +53,35 @@ MBON.photoquadrat <- MBON.photoquadrat %>% select_if(negate(function(col) is.num
 
 #Set the working directory to the folder "Source_MBON" and read percent_cover.csv and metdata.csv files (downloaded "as it" from Coralnet source)
 library(here)
-MBON.photoquadrat.cover <- read.csv(here("Source_MBON", "percent_covers.csv"))
-MBON.photoquadrat.metadata <- read.csv(here("Source_MBON", "metadata.csv"))
+PQ.ALL.cover <- read.csv(here("Source_MBON", "percent_covers.csv"))
+PQ.ALL.metadata <- read.csv(here("Source_MBON", "metadata.csv"))
 
 #Merge photoquadrat.metadata and photoquadrat.cover
-MBON.photoquadrat<- merge(MBON.photoquadrat.metadata,MBON.photoquadrat.cover, by = "Name", all.x = TRUE) 
+PQ.ALL<- merge(PQ.ALL.metadata,PQ.ALL.cover, by = "Name", all.x = TRUE) 
 
 #Remove original data frames from enviroment
-rm(MBON.photoquadrat.cover)
-rm(MBON.photoquadrat.metadata)
+rm(PQ.ALL.cover)
+rm(PQ.ALL.metadata)
 
 #CHECK wich date format you have in the files. Sometimes if you open the file with excel it may change the date format 
 #transform to date format
-MBON.photoquadrat$Date <- as.Date(MBON.photoquadrat$Date,'%Y-%m-%d')
-#MBON.photoquadrat$Date <- as.Date(MBON.photoquadrat$Date,'%d/%m/%Y')
+PQ.ALL$Date <- as.Date(PQ.ALL$Date,'%Y-%m-%d')
+#PQ.ALL$Date <- as.Date(PQ.ALL$Date,'%d/%m/%Y')
 
 #Eliminate colums with taxa categories (CATAMI) that were not used for the photoquadrats
 #this codes search colsum= 0 in all the data frame , and remove those columns, we need to set lat ang long that have negative numbers in order to avoid being removed
-MBON.photoquadrat$Water.quality <- "INTERTIDAL"
-MBON.photoquadrat$Depth <- "INTERTIDAL"
-MBON.photoquadrat$White.balance.card <- "NONE"
-MBON.photoquadrat$Strobes <- "NONE"
-MBON.photoquadrat$Height..cm. <- as.character(MBON.photoquadrat$Height..cm.)
-MBON.photoquadrat$Latitude <- as.character(MBON.photoquadrat$Latitude)
-MBON.photoquadrat$Longitude <- as.character(MBON.photoquadrat$Longitude)
+PQ.ALL$Water.quality <- "INTERTIDAL"
+PQ.ALL$Depth <- "INTERTIDAL"
+PQ.ALL$White.balance.card <- "NONE"
+PQ.ALL$Strobes <- "NONE"
+PQ.ALL$Height..cm. <- as.character(PQ.ALL$Height..cm.)
+PQ.ALL$Latitude <- as.character(PQ.ALL$Latitude)
+PQ.ALL$Longitude <- as.character(PQ.ALL$Longitude)
 library(tidyverse) 
-MBON.photoquadrat <- MBON.photoquadrat %>% select_if(negate(function(col) is.numeric(col) && sum(col) <= 0))
+PQ.ALL <- PQ.ALL %>% select_if(negate(function(col) is.numeric(col) && sum(col) <= 0))
 
-MBON.photoquadrat$Comments <- as.factor(MBON.photoquadrat$Comments)
-levels(MBON.photoquadrat$Comments) <-  c("Human.random", "Robot")
-
+PQ.ALL$Comments <- as.factor(PQ.ALL$Comments)
+levels(PQ.ALL$Comments) <-  c("PQ.Human.Random", "PQ.Robot")
 
 
 #Read photoquadrats data from individual sources in COUNTRIES
@@ -90,34 +90,34 @@ levels(MBON.photoquadrat$Comments) <-  c("Human.random", "Robot")
 
 #Set the working directory to the folder "Source_Galapagos" and read percent_cover.csv and metdata.csv files (downloaded "as it" from Coralnet source)
 library(here)
-EC.photoquadrat.cover <- read.csv(here("Source_Galapagos","percent_covers.csv"))
-EC.photoquadrat.metadata <- read.csv(here("Source_Galapagos","metadata.csv"))
+PQ.EC.cover <- read.csv(here("Source_Galapagos","percent_covers.csv"))
+PQ.EC.metadata <- read.csv(here("Source_Galapagos","metadata.csv"))
 
 #Merge photoquadrat.metadata and photoquadrat.cover
-EC.photoquadrat<- merge(EC.photoquadrat.metadata,EC.photoquadrat.cover, by = "Name", all.x = TRUE) 
+PQ.EC<- merge(PQ.EC.metadata,PQ.EC.cover, by = "Name", all.x = TRUE) 
 
 #Remove original data frames from enviroment
-rm(EC.photoquadrat.cover)
-rm(EC.photoquadrat.metadata)
+rm(PQ.EC.cover)
+rm(PQ.EC.metadata)
 
 #CHECK wich date format you have in the files. Sometimes if you open the file with excel it may change the date format 
 #transform to date format
-EC.photoquadrat$Date <- as.Date(EC.photoquadrat$Date,'%Y-%m-%d')
-#EC.photoquadrat$Date <- as.Date(EC.photoquadrat$Date,'%d/%m/%Y')
+PQ.EC$Date <- as.Date(PQ.EC$Date,'%Y-%m-%d')
+#PQ.EC$Date <- as.Date(PQ.EC$Date,'%d/%m/%Y')
 
 #Eliminate colums with taxa categories (CATAMI) that were not used for the photoquadrats
 #as this codes search colsum= 0 in all the data frame , and removo those columns, we need to set lat ang long that have negative numbers in order to avoid being removed
-EC.photoquadrat$Latitude <- as.character(EC.photoquadrat$Latitude)
-EC.photoquadrat$Longitude <- as.character(EC.photoquadrat$Longitude)
-EC.photoquadrat$Depth <- "INTERTIDAL"
-EC.photoquadrat$Water.quality <- "INTERTIDAL"
-EC.photoquadrat$Strobes <- "NONE"
-EC.photoquadrat$White.balance.card <- "NONE"
+PQ.EC$Latitude <- as.character(PQ.EC$Latitude)
+PQ.EC$Longitude <- as.character(PQ.EC$Longitude)
+PQ.EC$Depth <- "INTERTIDAL"
+PQ.EC$Water.quality <- "INTERTIDAL"
+PQ.EC$Strobes <- "NONE"
+PQ.EC$White.balance.card <- "NONE"
 library(tidyverse) 
-EC.photoquadrat <- EC.photoquadrat %>% select_if(negate(function(col) is.numeric(col) && sum(col) <= 0))
+PQ.EC <- PQ.EC %>% select_if(negate(function(col) is.numeric(col) && sum(col) <= 0))
 
-EC.photoquadrat$Comments <- as.factor(EC.photoquadrat$Comments)
-
+PQ.EC$Comments <- as.factor(PQ.EC$Comments)
+levels(PQ.EC$Comments) <-  c("PQ.Human.Random", "PQ.Robot.bycountry")
 
 
 #Source_Colombia (CO)---------
@@ -125,33 +125,35 @@ EC.photoquadrat$Comments <- as.factor(EC.photoquadrat$Comments)
 
 #Set the working directory to the folder "Source_Colombia" and read percent_cover.csv and metdata.csv files (downloaded "as it" from Coralnet source)
 library(here)
-CO.photoquadrat.cover <- read.csv(here("Source_Colombia","percent_covers.csv"))
-CO.photoquadrat.metadata <- read.csv(here("Source_Colombia","metadata.csv"))
+PQ.CO.cover <- read.csv(here("Source_Colombia","percent_covers.csv"))
+PQ.CO.metadata <- read.csv(here("Source_Colombia","metadata.csv"))
 
 
 #Merge photoquadrat.metadata and photoquadrat.cover
-CO.photoquadrat<- merge(CO.photoquadrat.metadata,CO.photoquadrat.cover, by = "Name", all.x = TRUE) 
+PQ.CO<- merge(PQ.CO.metadata,PQ.CO.cover, by = "Name", all.x = TRUE) 
 
 #Remove original data frames from enviroment
-rm(CO.photoquadrat.cover)
-rm(CO.photoquadrat.metadata)
+rm(PQ.CO.cover)
+rm(PQ.CO.metadata)
 
 #Check wich date format you have in the files. Sometimes if you open the file with excel it may change the date format 
 #transform to date format
-CO.photoquadrat$Date <- as.Date(CO.photoquadrat$Date,'%Y-%m-%d')
-#CO.photoquadrat$Date <- as.Date(CO.photoquadrat$Date,'%d/%m/%Y')
+PQ.CO$Date <- as.Date(PQ.CO$Date,'%Y-%m-%d')
+#PQ.CO$Date <- as.Date(PQ.CO$Date,'%d/%m/%Y')
 
 #Eliminate colums with taxa categories (CATAMI) that were not used for the photoquadrats
 #as this codes search colsum= 0 in all the data frame , and removo those columns, we need to set lat ang long that have negative numbers in order to avoid being removed
-CO.photoquadrat$Latitude <- as.character(CO.photoquadrat$Latitude)
-CO.photoquadrat$Longitude <- as.character(CO.photoquadrat$Longitude)
-CO.photoquadrat$Water.quality <- "INTERTIDAL"
-CO.photoquadrat$Depth <- "INTERTIDAL"
-CO.photoquadrat$Strobes <- "NONE"
-CO.photoquadrat$White.balance.card <- "NONE"
+PQ.CO$Latitude <- as.character(PQ.CO$Latitude)
+PQ.CO$Longitude <- as.character(PQ.CO$Longitude)
+PQ.CO$Water.quality <- "INTERTIDAL"
+PQ.CO$Depth <- "INTERTIDAL"
+PQ.CO$Strobes <- "NONE"
+PQ.CO$White.balance.card <- "NONE"
 library(tidyverse) 
-CO.photoquadrat <- CO.photoquadrat %>% select_if(negate(function(col) is.numeric(col) && sum(col) <= 0))
+PQ.CO <- PQ.CO %>% select_if(negate(function(col) is.numeric(col) && sum(col) <= 0))
 
+PQ.CO$Comments <- as.factor(PQ.CO$Comments)
+levels(PQ.CO$Comments) <-  c("PQ.Human.Random", "PQ.Robot.bycountry")
 
 
 #Source_Argentina (AR)---------
@@ -159,65 +161,69 @@ CO.photoquadrat <- CO.photoquadrat %>% select_if(negate(function(col) is.numeric
 
 #Set the working directory to the folder "Source_Argentina" and read percent_cover.csv and metdata.csv files (downloaded "as it" from Coralnet source)
 library(here)
-AR.photoquadrat.cover <- read.csv(here("Source_Argentina","percent_covers.csv"))
-AR.photoquadrat.metadata <- read.csv(here("Source_Argentina","metadata.csv"))
+PQ.AR.cover <- read.csv(here("Source_Argentina","percent_covers.csv"))
+PQ.AR.metadata <- read.csv(here("Source_Argentina","metadata.csv"))
 
 
 #Merge photoquadrat.metadata and photoquadrat.cover
-AR.photoquadrat<- merge(AR.photoquadrat.metadata,AR.photoquadrat.cover, by = "Name", all.x = TRUE) 
+PQ.AR<- merge(PQ.AR.metadata,PQ.AR.cover, by = "Name", all.x = TRUE) 
 
 #Remove original data frames from enviroment
-rm(AR.photoquadrat.cover)
-rm(AR.photoquadrat.metadata)
+rm(PQ.AR.cover)
+rm(PQ.AR.metadata)
 
 #CHECK wich date format you have in the files. Sometimes if you open the file with excel it may change the date format 
 #transform to date format
-AR.photoquadrat$Date <- as.Date(AR.photoquadrat$Date,'%Y-%m-%d')
-#AR.photoquadrat$Date <- as.Date(AR.photoquadrat$Date,'%d/%m/%Y')
+PQ.AR$Date <- as.Date(PQ.AR$Date,'%Y-%m-%d')
+#PQ.AR$Date <- as.Date(PQ.AR$Date,'%d/%m/%Y')
 
 #Eliminate colums with taxa categories (CATAMI) that were not used for the photoquadrats
 #as this codes search colsum= 0 in all the data frame , and removo those columns, we need to set lat ang long that have negative numbers in order to avoid being removed
-AR.photoquadrat$Latitude <- as.character(AR.photoquadrat$Latitude)
-AR.photoquadrat$Longitude <- as.character(AR.photoquadrat$Longitude)
-AR.photoquadrat$Depth<- "INTERTIDAL"
-AR.photoquadrat$Strobes<- "NONE"
-AR.photoquadrat$White.balance.card<- "NONE"
+PQ.AR$Latitude <- as.character(PQ.AR$Latitude)
+PQ.AR$Longitude <- as.character(PQ.AR$Longitude)
+PQ.AR$Depth<- "INTERTIDAL"
+PQ.AR$Strobes<- "NONE"
+PQ.AR$White.balance.card<- "NONE"
 library(tidyverse) 
-AR.photoquadrat <- AR.photoquadrat %>% select_if(negate(function(col) is.numeric(col) && sum(col) <= 0))
+PQ.AR <- PQ.AR %>% select_if(negate(function(col) is.numeric(col) && sum(col) <= 0))
+
+PQ.AR$Comments <- as.factor(PQ.AR$Comments)
+levels(PQ.AR$Comments) <-  c("PQ.Human.Random", "PQ.Robot.bycountry")
+
 
 #Source_USA (US)---------
 #https://coralnet.ucsd.edu/source/1997/
 
 #Set the working directory to the folder "Source_Argentina" and read percent_cover.csv and metdata.csv files (downloaded "as it" from Coralnet source)
 library(here)
-US.photoquadrat.cover <- read.csv(here("Source_USA/184_random_robot","percent_covers.csv"))
-US.photoquadrat.metadata <- read.csv(here("Source_USA/184_random_robot","metadata.csv"))
+PQ.US.cover <- read.csv(here("Source_USA/Source_MBON_USA","percent_covers.csv"))
+PQ.US.metadata <- read.csv(here("Source_USA/Source_MBON_USA","metadata.csv"))
 
 
 #Merge photoquadrat.metadata and photoquadrat.cover
-US.photoquadrat<- merge(US.photoquadrat.metadata,US.photoquadrat.cover, by = "Name", all.x = TRUE) 
+PQ.US<- merge(PQ.US.metadata,PQ.US.cover, by = "Name", all.x = TRUE) 
 
 #Remove original data frames from enviroment
-rm(US.photoquadrat.cover)
-rm(US.photoquadrat.metadata)
+rm(PQ.US.cover)
+rm(PQ.US.metadata)
 
 #CHECK wich date format you have in the files. Sometimes if you open the file with excel it may change the date format 
 #transform to date format
-US.photoquadrat$Date <- as.Date(US.photoquadrat$Date,'%Y-%m-%d')
-#US.photoquadrat$Date <- as.Date(US.photoquadrat$Date,'%d/%m/%Y')
+PQ.US$Date <- as.Date(PQ.US$Date,'%Y-%m-%d')
+#PQ.US$Date <- as.Date(PQ.US$Date,'%d/%m/%Y')
 
 #Eliminate colums with taxa categories (CATAMI) that were not used for the photoquadrats
 #as this codes search colsum= 0 in all the data frame , and removo those columns, we need to set lat ang long that have negative numbers in order to avoid being removed
-US.photoquadrat$Depth <- "INTERTIDAL"
-US.photoquadrat$White.balance.card <- "NONE"
-US.photoquadrat$Strobes <- "NONE"
-US.photoquadrat$Comments <- US.photoquadrat$Annotation.status
-US.photoquadrat$Comments <- as.factor(US.photoquadrat$Comments)
-levels(US.photoquadrat$Comments) <-  c("Human.random", "Robot.SOURCE")
-US.photoquadrat$Latitude <- as.character(US.photoquadrat$Latitude)
-US.photoquadrat$Longitude <- as.character(US.photoquadrat$Longitude)
+PQ.US$Depth <- "INTERTIDAL"
+PQ.US$White.balance.card <- "NONE"
+PQ.US$Strobes <- "NONE"
+PQ.US$Latitude <- as.character(PQ.US$Latitude)
+PQ.US$Longitude <- as.character(PQ.US$Longitude)
 library(tidyverse) 
-US.photoquadrat <- US.photoquadrat %>% select_if(negate(function(col) is.numeric(col) && sum(col) <= 0))
+PQ.US <- PQ.US %>% select_if(negate(function(col) is.numeric(col) && sum(col) <= 0))
+
+PQ.US$Comments <- as.factor(PQ.US$Comments)
+levels(PQ.US$Comments) <-  c("PQ.Human.Random", "PQ.Robot.bycountry")      
 
 
 #READ VISUAL QUADRAT DATA--------------------------------------------------------
@@ -235,45 +241,76 @@ US.visual <- read.csv(here("Visual_quadrats","usa_visual.csv"))
 US.visual$Date <- as.Date(EC.visual$Date,'%m/%d/%Y')
 
 #joint all visual quadrat dataframes
-visual.ALL <- dplyr::bind_rows(AR.visual, CO.visual, EC.visual,US.visual)
+VQ.Human.ALL <- dplyr::bind_rows(AR.visual, CO.visual, EC.visual,US.visual)
 #eliminated NA and add 0 
-visual.ALL[is.na(visual.ALL)] <- 0
+VQ.Human.ALL[is.na(VQ.Human.ALL)] <- 0
 
 #remove data frames with visual data from each country 
 rm(AR.visual,CO.visual,EC.visual,US.visual)
 
+VQ.Human.ALL$Comments <- as.factor(VQ.Human.ALL$Comments)
+levels(VQ.Human.ALL$Comments) <-  c("VQ.Human")
+
+
+
+#READ Photoquadrats by HUMAN-------- 
+PQ.Human.ALL <- read.csv(here("Human_photoquadrats","photoquadrat_human_AR_EC_CO_US.csv"))
+#PQ.Human.ALL$Date <- as.Date(PQ.Human.ALL$Date,'%Y-%m-%d')
+PQ.Human.ALL$Date <- as.Date(PQ.Human.ALL$Date,'%d/%m/%Y')
+PQ.Human.ALL$Comments <- as.factor(PQ.Human.ALL$Comments)
+levels(PQ.Human.ALL$Comments) <-  c("PQ.Human")
+
+#write.csv(PQ.Human.ALL,file="PQ.Human.ALL.csv", row.names=FALSE)
+
 
 #PREPARE DATA FOR ANALYSIS---------------------------------------------------------
 #Joint photo and visual dataframes
-photoquadrat_visual <- rbindlist(list(visual.ALL, MBON.photoquadrat,AR.photoquadrat,CO.photoquadrat,EC.photoquadrat,US.photoquadrat), fill = TRUE)
-#photoquadrat_visual <- rbindlist(list(visual.ALL, MBON.photoquadrat), fill = TRUE)
-#replace NA from unc to cero values
-photoquadrat_visual[is.na(photoquadrat_visual)] <- 0
+PQ_VQ <- rbindlist(list(VQ.Human.ALL,PQ.Human.ALL,PQ.ALL,PQ.AR,PQ.CO,PQ.EC,PQ.US), fill = TRUE)
 
-#write.csv(photoquadrat_visual,file="photoquadrat_visual.csv")
+
+
+#replace NA with cero values
+PQ_VQ[is.na(PQ_VQ)] <- 0
+
+# We take out PQ.Human.Random level , because was used only for training the robot
+PQ_VQ <- droplevels(PQ_VQ[!PQ_VQ$Comments == 'PQ.Human.Random',])
 
 
 #Annotation (types of analysis) in comments column 
-photoquadrat_visual$Comments <- as.factor(photoquadrat_visual$Comments)
-levels(photoquadrat_visual$Comments) <-  c("Visualquadrat","Human", "Robot","Robot.bycountry")
+PQ_VQ$Comments <- as.factor(PQ_VQ$Comments)
+
 
 #change the  order of factor levels
-photoquadrat_visual$Comments <- factor(photoquadrat_visual$Comments, levels =c("Human", "Robot","Robot.bycountry","Visualquadrat"))
+PQ_VQ$Comments <- factor(PQ_VQ$Comments, levels =c("PQ.Human", "PQ.Robot","PQ.Robot.bycountry","VQ.Human"))
 
-#levels(photoquadrat_visual$Comments) <-  c("Alleviate 50%","Human", "Photoquadrat.R","Robot","Robot.bycountry","Visualquadrat")
 
-#change the  order of factor levels
-#photoquadrat_visual$Comments <- factor(photoquadrat_visual$Comments, levels =c("Photoquadrat.R","Human","Robot","Robot.bycountry","Alleviate 50%","Visualquadrat"))
+
+#unc + SHAD = NODATA
+PQ_VQ$NODATA <- as.numeric(paste(PQ_VQ$Unc + PQ_VQ$SHAD))
+
+PQ_VQ <- PQ_VQ %>% 
+  select(-Unc,-SHAD,-NODATA)
+
+
 
 
 #Create long type dataframe 
-photoquadrat_visual_long = melt(photoquadrat_visual, id.vars = 1:20, measure.vars = 21:ncol(photoquadrat_visual), variable_name = "CATAMI", value_name ="cover", na.rm = T)
+PQ_VQ_long = melt(PQ_VQ, id.vars = 1:20, measure.vars = 21:ncol(PQ_VQ), variable_name = "CATAMI", value_name ="cover", na.rm = T)
 #rename columns because the ontop command is not working 
-colnames(photoquadrat_visual_long)[21] <- "CATAMI"
-colnames(photoquadrat_visual_long)[22] <- "cover"
+colnames(PQ_VQ_long)[21] <- "CATAMI"
+colnames(PQ_VQ_long)[22] <- "cover"
 
-#Calculate mean, SD, SE for cover data by factors (species=Shortname,site, strata,) 
-Coverdata <- summaryBy(cover ~ CATAMI + country + strata + Comments,data=photoquadrat_visual_long, FUN = function(x) { c(mean = mean(x),SD=sd(x),SE = sqrt(var(x)/length(x)))})
+
+## calculate number of points used for % (100- NODATA points)
+nIntersecciones = PQ_VQ_long %>% group_by(Name,Comments) %>% 
+  summarise(totalIntersecciones = sum(cover, na.rm=T))
+
+PQ_VQ_long = left_join(PQ_VQ_long, nIntersecciones)
+PQ_VQ_long$cover.rel = round(100*PQ_VQ_long$cover/PQ_VQ_long$totalIntersecciones, 1)
+
+
+#Calculate mean, SD, SE for cover data by factors 
+Coverdata <- summaryBy(cover + cover.rel ~ CATAMI + country + strata + Comments,data=PQ_VQ_long, FUN = function(x) { c(mean = mean(x),SD=sd(x),SE = sqrt(var(x)/length(x)))})
 
 
 #Abundant CATAMI categories-------
@@ -281,39 +318,47 @@ Coverdata <- summaryBy(cover ~ CATAMI + country + strata + Comments,data=photoqu
 #SC,MAEN, MOB, MAF, MAS, MAA,MAEC,CRB
 Coverdata_abundant <- subset(Coverdata,CATAMI=="SC"|CATAMI=="MAEN"|CATAMI=="MOB"|CATAMI=="MAF"|CATAMI=="MAS"|CATAMI=="MAA"|CATAMI=="MAEC"|CATAMI=="CRB")
 
-#we take out photoquadrats analysed by 100 random points
-#Coverdata_abundant <- subset(Coverdata_abundant,Comments!="Photoquadrat.R")
 
 #Functional Groups-----------
 #Create a dataframe with functional groups ALGAE, SUSTRATE and INVERTEBRATES
-photoquadrat_visual.FG <- photoquadrat_visual
-photoquadrat_visual.FG$ALGAE <- as.numeric(paste(photoquadrat_visual.FG$MOG+photoquadrat_visual.FG$MAEN+photoquadrat_visual.FG$MAA+photoquadrat_visual.FG$MAF+photoquadrat_visual.FG$MAG+photoquadrat_visual.FG$MALCB+photoquadrat_visual.FG$MAS+photoquadrat_visual.FG$MAEC))
-photoquadrat_visual.FG$SUBSTRATE <- photoquadrat_visual.FG$SC
-photoquadrat_visual.FG$INVERTEBRATES <- as.numeric(paste(photoquadrat_visual.FG$MOB+photoquadrat_visual.FG$CNCA+photoquadrat_visual.FG$CNTR+photoquadrat_visual.FG$CRB+photoquadrat_visual.FG$WPOT))
+
+PQ_VQ.FG <- PQ_VQ
+#MAF,MAEN,MAA,MAG,MAS,MALCB,MAEC,MAEF,MALA
+PQ_VQ.FG$ALGAE <- as.numeric(paste(PQ_VQ.FG$MAF+PQ_VQ.FG$MAEN+PQ_VQ.FG$MAA+PQ_VQ.FG$MAG+PQ_VQ.FG$MAS+PQ_VQ.FG$MALCB+PQ_VQ.FG$MAEC+PQ_VQ.FG$MAEF+PQ_VQ.FG$MALA))
+PQ_VQ.FG$SUBSTRATE <- PQ_VQ.FG$SC
+#CRB,MOB,CNTR,WPOT,MOG,CNCA,BRY,CR,MOCH
+PQ_VQ.FG$INVERTEBRATES <- as.numeric(paste(PQ_VQ.FG$CRB+PQ_VQ.FG$MOB+PQ_VQ.FG$CNTR+PQ_VQ.FG$WPOT+PQ_VQ.FG$MOG+ PQ_VQ.FG$CNCA+PQ_VQ.FG$BRY+PQ_VQ.FG$CR+PQ_VQ.FG$MOCH))
 
 #Create long type dataframe for FG
-photoquadrat_visual_long.FG = melt(photoquadrat_visual.FG, id.vars = 1:20, measure.vars = 41:43, variable_name = "CATAMI", cover_name ="cover", na.rm = T)
-colnames(photoquadrat_visual_long.FG)[21] <- "CATAMI"
-colnames(photoquadrat_visual_long.FG)[22] <- "cover"
+PQ_VQ_long.FG = melt(PQ_VQ.FG, id.vars = 1:20, measure.vars = 40:42, variable_name = "CATAMI", cover_name ="cover", na.rm = T)
+colnames(PQ_VQ_long.FG)[21] <- "CATAMI"
+colnames(PQ_VQ_long.FG)[22] <- "cover"
+
+##number of points in PHOTO (100-Unc)
+nIntersecciones = PQ_VQ_long.FG %>% group_by(Name,Comments) %>% 
+  summarise(totalIntersecciones = sum(cover, na.rm=T))
+## y calculo la cobertura relativa al total de intersecciones en la cuadrata
+PQ_VQ_long.FG = left_join(PQ_VQ_long.FG, nIntersecciones)
+PQ_VQ_long.FG$cover.rel = round(100*PQ_VQ_long.FG$cover/PQ_VQ_long.FG$totalIntersecciones, 1)
+
+rm(nIntersecciones)
 
 #calculate avg, SD and SE
-Coverdata.FG <- summaryBy(cover ~ CATAMI + country + strata + Comments,data=photoquadrat_visual_long.FG , FUN = function(x) { c(mean = mean(x),SD=sd(x),SE = sqrt(var(x)/length(x)))})
+Coverdata.FG <- summaryBy(cover + cover.rel ~ CATAMI + country + strata + Comments,data=PQ_VQ_long.FG , FUN = function(x) { c(mean = mean(x),SD=sd(x),SE = sqrt(var(x)/length(x)))})
 
-#we take out photoquadrats analysed by 100 random points
-#Coverdata.FG <- subset(Coverdata.FG,Comments!="Photoquadrat.R")
-
-#we take out photoquadrats analysed by 100 random points
-#photoquadrat_visual_long.FG2 <- subset(photoquadrat_visual_long.FG,Comments!="Photoquadrat.R")
 
 #READ LABELSET
 
 labelset <- read.csv(here("Labelset","labelset_used.csv"))
+#knitr::kable(labelset)
 
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 
 #create matrix for correlation 
-correlations<- merge(MBON.photoquadrat,visual.ALL, by = "Name",suffixes = c(".A",".H")) 
+correlations<- merge(PQ.ALL,VQ.Human.ALL, by = "Name",suffixes = c(".A",".H")) 
 #A= photo H = visual
 
 
+#Read file with differences between VQ.HUMAN and PQ.ROBOT for Bland-Altman plots
+FG <- read.csv("FG_diff.csv")

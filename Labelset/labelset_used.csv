@@ -1,16 +1,20 @@
-Name,Short Code,Functional Group,ID CoralNet,ID CATAMI
-Cnidaria: Colonial anemones,CNCA,Other Invertebrates,4773,11500901
-Cnidaria: True anemones,CNTR,Other Invertebrates,4774,11229000
-Crustacea: Barnacles,CRB,Other Invertebrates,357,27500000
-Molluscs: Bivalves,MOB,Other Invertebrates,355,23199000
-Molluscs: Gastropods,MOG,Other Invertebrates,353,24000000
-Sponge,SP,Other Invertebrates,102,10000000
-Worms: Polychaetes: Tube worms,WPOT,Other Invertebrates,361,22000901
-Substrate: Consolidated (hard),SC,Hard Substrate,4114,82001001
-Unclear,Unc,Other,118,
-Macroalgae: Articulated calcareous,MAA,Algae,325,80300911
-Macroalgae: Encrusting,MAEN,Algae,321,80300926
-Macroalgae: Filamentous / filiform,MAF,Algae,309,80300930
-Macroalgae: Globose / saccate,MAG,Algae,305,80300914
-Macroalgae: Large canopy-forming : brown,MALCB,Algae,299,80300902
-Macroalgae: Sheet-like / membraneous,MAS,Algae,294,80300922
+Name,Short Code,Functional Group,ID CoralNet,ID CATAMI,Country
+Bryozoan,BRY,Invertebrates,1853,20000000,US
+Cnidaria: Colonial anemones,CNCA,Invertebrates,4773,11500901,EC
+Cnidaria: True anemones,CNTR,Invertebrates,4774,11229000,"EC,US"
+Crustacea: Barnacles,CRB,Invertebrates,357,27500000,"AR,EC,CO,US"
+Molluscs: Bivalves,MOB,Invertebrates,355,23199000,"AR,US"
+Molluscs: Gastropods,MOG,Invertebrates,353,24000000,"CO,US"
+Sponge,SP,Invertebrates,102,10000000,AR
+Worms: Polychaetes: Tube worms,WPOT,Invertebrates,361,22000901,"AR,CO,EC"
+Substrate: Consolidated (hard),SC,Substrate,4114,82001001,
+Unclear,Unc,Other,118,,
+Macroalgae: Articulated calcareous,MAA,Algae,325,80300911,"AR,CO,US"
+Macroalgae: Erect coarse branching,MAEC,Algae,317,80300903,US
+Macroalgae: Erect fine branching,MAEF,Algae,313,80300907,US
+Macroalgae: Encrusting,MAEN,Algae,321,80300926,"AR,EC,CO,US"
+Macroalgae: Filamentous / filiform,MAF,Algae,309,80300930,"AR,EC,CO,US"
+Macroalgae: Globose / saccate,MAG,Algae,305,80300914,AR
+Macroalgae: Laminate,MALA,Algae,301,80300918,US
+Macroalgae: Large canopy-forming : brown,MALCB,Algae,299,80300902,AR
+Macroalgae: Sheet-like / membraneous,MAS,Algae,294,80300922,"AR,EC,US"
