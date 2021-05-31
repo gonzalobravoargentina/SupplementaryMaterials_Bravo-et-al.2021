@@ -4,6 +4,8 @@
 
 source('./READ_DATA.R')
 #PREPARATION OF DATA for Bland-Altman plots
+
+#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 #Mean for groups (Algae,substrate and Invertebrates) by sites
 library(doBy)
 FG_DATA <- summaryBy(ALGAE+SUBSTRATE+INVERTEBRATES ~ site + country + strata +Comments,data=PQ_VQ.FG,FUN = mean)
@@ -12,7 +14,7 @@ FG_DATA <- summaryBy(ALGAE+SUBSTRATE+INVERTEBRATES ~ site + country + strata +Co
 colnames(FG_DATA) <- c("site","country","strata","Comments","ALGAE","SUBSTRATE","INVERTEBRATES")
 
 #take only VQ.HUMAN and PQ.ROBOT
-FG_DATA <- subset(FG_DATA, Comments=="VQ.Human"|Comments=="PQ.Robot")
+#FG_DATA <- subset(FG_DATA, Comments=="VQ.Human"|Comments=="PQ.Robot")
 
 #take only PQ.ROBOT
 FG_DATA_Robot <-  subset(FG_DATA, Comments=="PQ.Robot")
@@ -22,10 +24,36 @@ colnames(FG_DATA_Robot) <- c("site","country","strata","Comments","ALGAE.R","SUB
 FG_DATA_Human <-  subset(FG_DATA, Comments=="VQ.Human")
 colnames(FG_DATA_Human) <- c("site","country","strata","Comments","ALGAE.H","SUBSTRATE.H","INVERTEBRATES.H")
 
+
 #MERGE FG_DATA_Robot and FG_DATA_Human
+#chosse cmbination (VQ vs PQ or PQ.human vs PQ.robot)
 FG <- dplyr::full_join(FG_DATA_Human, FG_DATA_Robot,by = c("site", "country", "strata"))
 
 rm(FG_DATA,FG_DATA_Human,FG_DATA_Robot)
+
+
+#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+#AlL observations for Arg, COl y EC 
+#FG_DATA <- summaryBy(ALGAE+SUBSTRATE+INVERTEBRATES ~ site + country + strata +Name +Comments,data=PQ_VQ.FG,FUN = mean)
+
+#take only VQ.HUMAN and PQ.ROBOT
+#FG_DATA <- subset(FG_DATA, Comments=="VQ.Human"|Comments=="PQ.Robot")
+
+#take only PQ.ROBOT
+#FG_DATA_Robot <-  subset(FG_DATA, Comments=="PQ.Robot")
+#colnames(FG_DATA_Robot) <- c("site","country","strata","Name","Comments","ALGAE.R","SUBSTRATE.R","INVERTEBRATES.R")
+
+#take only VQ.HUMAN 
+#FG_DATA_Human <-  subset(FG_DATA, Comments=="VQ.Human")
+#colnames(FG_DATA_Human) <- c("site","country","strata","Name","Comments","ALGAE.H","SUBSTRATE.H","INVERTEBRATES.H")
+
+#MERGE FG_DATA_Robot and FG_DATA_Human
+#FG <- dplyr::full_join(FG_DATA_Human, FG_DATA_Robot,by = c("site", "country", "strata"))
+#FG <-  subset(FG, country!="USA")
+
+#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
 
 library(ggplot2)
 library(cowplot)
@@ -39,7 +67,11 @@ library(dplyr)
 library(plotly)
 library(ggpubr)
 
-#SUBSTRATE------
+
+
+#Plot Supplementary materials------
+#PQ.Robot vs VQ (Human)
+#SUBSTRATE
 
 SC<-  FG
 #differenced_data= Method_A - Method_B
@@ -86,8 +118,7 @@ legend_plot <- get_legend(legend)#take legend
 #ggsave(here("Figures", "Fig_3.pdf"),width =10,height =5)
 #ggsave(here("Figures", "Fig_3.png"),width =10,height =5)
 
-#ALGAE------
-
+#ALGAE
 AL<-  FG
 #differenced_data= Method_A - Method_B
 AL$diff <- AL$ALGAE.R-AL$ALGAE.H
@@ -133,7 +164,7 @@ plot.ALGAE <- plot_grid(legend_plot,grid2, ncol = 1, rel_heights = c(.25,1))
 #ggsave(here("Figures", "Fig_4.pdf"),width =5,height =5)
 #ggsave(here("Figures", "Fig_4.png"),width =5,height =5)
 
-#INVERTEBRATES------
+#INVERTEBRATES
 
 IN<-  FG
 #differenced_data= Method_A - Method_B
@@ -184,21 +215,209 @@ plot.SC_ALGAE_INV <- plot_grid(legend_plot,grid1,grid2,grid3, ncol = 1, rel_heig
 #ggsave(here("Figures", "Fig_4.pdf"),width =8,height =12)
 
 
+#Plot figure 4 A------
+#(run first line on top)
 
-#ALGAE,SUBSTRATE AND INVERTEBRATES------
+#ALGAE,SUBSTRATE AND INVERTEBRATES
+#PQ.Robot vs VQ
 #https://cran.r-project.org/web/packages/BlandAltmanLeh/vignettes/Intro.html
 library(ggplot2)
 library(BlandAltmanLeh) 
 A <- c(IN$INVERTEBRATES.R,AL$ALGAE.R,SC$SUBSTRATE.R)
 B <- c(IN$INVERTEBRATES.H,AL$ALGAE.H,SC$SUBSTRATE.H)
+C <- c(IN$country,AL$country,SC$country)
+Color <- as.factor(C)
+levels(Color) <- c("#F8766D","#7CAE00","#00BFC4","#C77CFF")
+ba.stats <- bland.altman.stats(A, B)
 
-pl <- bland.altman.plot(A, B, graph.sys = "ggplot2")
-print(pl)
-ggsave(here("Figures", "Fig_4_bis.png"),width =8,height =6) 
+pl <- bland.altman.plot(A, B,graph.sys = "ggplot2")+ theme_light()
+pl <- pl + geom_point(color=Color,size=3) + ylab("Difference in % cover (PQ.Robot vs VQ)") + xlab("Average % cover of both methods (PQ.Robot vs VQ)")+ theme(text = element_text(size = 15))
+
+ggsave(here("Figures", "Fig_4.A.PDF"),width =8,height =6) 
 
 
 
 
+#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+#Plot Figure 4 B----
+#COMPARISON PQ.Human vs PQ.Robot
+#Mean for groups (Algae,substrate and Invertebrates) by sites
+library(doBy)
+FG_DATA <- summaryBy(ALGAE+SUBSTRATE+INVERTEBRATES ~ site + country + strata +Comments,data=PQ_VQ.FG,FUN = mean)
+
+#add columns names
+colnames(FG_DATA) <- c("site","country","strata","Comments","ALGAE","SUBSTRATE","INVERTEBRATES")
+
+
+#take only PQ.ROBOT
+FG_DATA_Robot <-  subset(FG_DATA, Comments=="PQ.Robot")
+colnames(FG_DATA_Robot) <- c("site","country","strata","Comments","ALGAE.R","SUBSTRATE.R","INVERTEBRATES.R")
+
+#take only PQ.HUMAN 
+FG_DATA_Human <-  subset(FG_DATA, Comments=="PQ.Human")
+colnames(FG_DATA_Human) <- c("site","country","strata","Comments","ALGAE.H","SUBSTRATE.H","INVERTEBRATES.H")
+
+#MERGE FG_DATA_Robot and FG_DATA_Human
+#chosse cmbination (VQ vs PQ or PQ.human vs PQ.robot)
+FG <- dplyr::full_join(FG_DATA_Human, FG_DATA_Robot,by = c("site", "country", "strata"))
+
+
+#SUBSTRATE
+SC<-  FG
+#differenced_data= Method_A - Method_B
+SC$diff <- SC$SUBSTRATE.R-SC$SUBSTRATE.H
+SC$avg <- (SC$SUBSTRATE.H+SC$SUBSTRATE.R)/2
+#by country
+SC2 <- SC %>% 
+  group_by(country) %>% 
+  summarise_at(vars(SUBSTRATE.R,SUBSTRATE.H,diff,avg), 
+               list(mean, sd)) 
+colnames(SC2) <- c("country","SUBSTRATE.R.mean","SUBSTRATE.H.mean","diff","avg","SUBSTRATE.R.SD","SUBSTRATE.H.SD","diff.SD","avg.SD")
+
+#ALGAE
+AL<-  FG
+#differenced_data= Method_A - Method_B
+AL$diff <- AL$ALGAE.R-AL$ALGAE.H
+AL$avg <- (AL$ALGAE.H+AL$ALGAE.R)/2
+
+#by country
+AL2 <- AL %>% 
+  group_by(country) %>% 
+  summarise_at(vars(ALGAE.R,ALGAE.H,diff,avg), 
+               list(mean, sd)) 
+colnames(AL2) <- c("country","ALGAE.R.mean","ALGAE.H.mean","diff","avg","ALGAE.R.SD","ALGAE.H.SD","diff.SD","avg.SD")
+
+
+#INVERTEBRATES------
+IN<-  FG
+#differenced_data= Method_A - Method_B
+IN$diff <- IN$INVERTEBRATES.R-IN$INVERTEBRATES.H
+IN$avg <- (IN$INVERTEBRATES.H+IN$INVERTEBRATES.R)/2
+#by country
+IN2 <- IN %>% 
+  group_by(country) %>% 
+  summarise_at(vars(INVERTEBRATES.R,INVERTEBRATES.H,diff,avg), 
+               list(mean, sd)) 
+colnames(IN2) <- c("country","INVERTEBRATES.R.mean","INVERTEBRATES.H.mean","diff","avg","INVERTEBRATES.R.SD","INVERTEBRATES.H.SD","diff.SD","avg.SD")
+
+
+library(ggplot2)
+library(BlandAltmanLeh) 
+A <- c(IN$INVERTEBRATES.R,AL$ALGAE.R,SC$SUBSTRATE.R)
+B <- c(IN$INVERTEBRATES.H,AL$ALGAE.H,SC$SUBSTRATE.H)
+C <- c(IN$country,AL$country,SC$country)
+Color <- as.factor(C)
+levels(Color) <- c("#F8766D","#7CAE00","#00BFC4","#C77CFF")
+ba.stats <- bland.altman.stats(A, B)
+
+pl <- bland.altman.plot(A, B,graph.sys = "ggplot2")+ theme_light()
+pl <- pl + geom_point(color=Color,size=3) + ylab("Difference in % cover (PQ.Robot vs PQ.Human)") + xlab("Average % cover of both methods (PQ.Robot vs PQ.Human)")+ theme(text = element_text(size = 15))
+
+
+ggsave(here("Figures", "Fig_4.B.pdf"),width =8,height =6) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+#COMPARISON PQ.Human vs VQ.Human
+#Mean for groups (Algae,substrate and Invertebrates) by sites
+library(doBy)
+FG_DATA <- summaryBy(ALGAE+SUBSTRATE+INVERTEBRATES ~ site + country + strata +Comments,data=PQ_VQ.FG,FUN = mean)
+
+#add columns names
+colnames(FG_DATA) <- c("site","country","strata","Comments","ALGAE","SUBSTRATE","INVERTEBRATES")
+
+
+#take only PQ.ROBOT
+FG_DATA_Robot <-  subset(FG_DATA, Comments=="PQ.Human")
+colnames(FG_DATA_Robot) <- c("site","country","strata","Comments","ALGAE.R","SUBSTRATE.R","INVERTEBRATES.R")
+
+#take only PQ.HUMAN 
+FG_DATA_Human <-  subset(FG_DATA, Comments=="VQ.Human")
+colnames(FG_DATA_Human) <- c("site","country","strata","Comments","ALGAE.H","SUBSTRATE.H","INVERTEBRATES.H")
+
+#MERGE FG_DATA_Robot and FG_DATA_Human
+#chosse cmbination (VQ vs PQ or PQ.human vs PQ.robot)
+FG <- dplyr::full_join(FG_DATA_Human, FG_DATA_Robot,by = c("site", "country", "strata"))
+
+
+#SUBSTRATE------
+SC<-  FG
+#differenced_data= Method_A - Method_B
+SC$diff <- SC$SUBSTRATE.R-SC$SUBSTRATE.H
+SC$avg <- (SC$SUBSTRATE.H+SC$SUBSTRATE.R)/2
+#by country
+SC2 <- SC %>% 
+  group_by(country) %>% 
+  summarise_at(vars(SUBSTRATE.R,SUBSTRATE.H,diff,avg), 
+               list(mean, sd)) 
+colnames(SC2) <- c("country","SUBSTRATE.R.mean","SUBSTRATE.H.mean","diff","avg","SUBSTRATE.R.SD","SUBSTRATE.H.SD","diff.SD","avg.SD")
+
+#ALGAE------
+AL<-  FG
+#differenced_data= Method_A - Method_B
+AL$diff <- AL$ALGAE.R-AL$ALGAE.H
+AL$avg <- (AL$ALGAE.H+AL$ALGAE.R)/2
+
+#by country
+AL2 <- AL %>% 
+  group_by(country) %>% 
+  summarise_at(vars(ALGAE.R,ALGAE.H,diff,avg), 
+               list(mean, sd)) 
+colnames(AL2) <- c("country","ALGAE.R.mean","ALGAE.H.mean","diff","avg","ALGAE.R.SD","ALGAE.H.SD","diff.SD","avg.SD")
+
+
+#INVERTEBRATES------
+IN<-  FG
+#differenced_data= Method_A - Method_B
+IN$diff <- IN$INVERTEBRATES.R-IN$INVERTEBRATES.H
+IN$avg <- (IN$INVERTEBRATES.H+IN$INVERTEBRATES.R)/2
+#by country
+IN2 <- IN %>% 
+  group_by(country) %>% 
+  summarise_at(vars(INVERTEBRATES.R,INVERTEBRATES.H,diff,avg), 
+               list(mean, sd)) 
+colnames(IN2) <- c("country","INVERTEBRATES.R.mean","INVERTEBRATES.H.mean","diff","avg","INVERTEBRATES.R.SD","INVERTEBRATES.H.SD","diff.SD","avg.SD")
+
+
+
+library(ggplot2)
+library(BlandAltmanLeh) 
+A <- c(IN$INVERTEBRATES.R,AL$ALGAE.R,SC$SUBSTRATE.R)
+B <- c(IN$INVERTEBRATES.H,AL$ALGAE.H,SC$SUBSTRATE.H)
+C <- c(IN$country,AL$country,SC$country)
+Color <- as.factor(C)
+levels(Color) <- c("#F8766D","#7CAE00","#00BFC4","#C77CFF")
+ba.stats <- bland.altman.stats(A, B)
+
+pl <- bland.altman.plot(A, B,graph.sys = "ggplot2")+ theme_light()
+pl <- pl + geom_point(color=Color) + ylab("Difference in % cover (PQ.Human vs VQ.Human)") + xlab("Average % cover of both methods (PQ.Human vs VQ.Human)")
+
+#ggsave(here("Figures", "Fig_4.2_Bis.PDF"),width =8,height =6) 
+
+
+
+
+
+
+library(scales)
+show_col(hue_pal()(4))
+show_col(hue_pal()(5))
 
 #CORRELATIONS PLOTS 
 library(ggpubr) 

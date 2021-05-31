@@ -62,7 +62,7 @@ write.csv(percentcoverselectedphotos,file = "percent_covers.csv")
 
 
 #SELECT 92 GRID ANNOTATIONS PHOTOS (HUMAN)-----
-
+#source https://coralnet.ucsd.edu/source/2028/
 #Read list of photos 92 selected
 selectedphotos <- read.csv(here("Source_USA","selected_photos_92.csv"))
 colnames(selectedphotos) <- "Name2"
@@ -148,10 +148,11 @@ write.csv(percentcoverselectedphotos,file = "percent_covers.csv",row.names=FALSE
 
 #HUMAN QUADRATS------
 #Create Human_photoquadrats data with those photos analysed by human using 100 points grid
-#Set the working directory to the folder "Source_MBON_P2P" and read percent_cover.csv and metdata.csv files (downloaded "as it" from Coralnet source)
+#Set the working directory to the folder "Source_MBON_AR_CO_EC" and read percent_cover.csv and metdata.csv files (downloaded "as it" from Coralnet source)
+#https://coralnet.ucsd.edu/source/1972
 library(here)
-photoquadrat_human.cover <- read.csv(here("Source_MBON_P2P", "percent_covers.csv"))
-photoquadrat_human.metadata <- read.csv(here("Source_MBON_P2P", "metadata.csv"))
+photoquadrat_human.cover <- read.csv(here("Source_MBON_AR_CO_EC", "percent_covers.csv"))
+photoquadrat_human.metadata <- read.csv(here("Source_MBON_AR_CO_EC", "metadata.csv"))
 
 #Merge photoquadrat.metadata and photoquadrat.cover
 photoquadrat_human<- merge(photoquadrat_human.metadata,photoquadrat_human.cover, by = "Name", all.x = TRUE) 

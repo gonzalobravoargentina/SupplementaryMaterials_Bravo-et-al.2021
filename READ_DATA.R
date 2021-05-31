@@ -22,39 +22,14 @@ library(reshape)
 library(dplyr)
 library(data.table)
 
-
-#Read data SOURCE MBON P2P--------
-# Source = https://coralnet.ucsd.edu/source/1972/
-
-#Set the working directory to the folder "Source_MBON_P2P" and read percent_cover.csv and metdata.csv files (downloaded "as it" from Coralnet source)
-#library(here)
-#MBON.photoquadrat.cover <- read.csv(here("Source_MBON_P2P", "percent_covers.csv"))
-#MBON.photoquadrat.metadata <- read.csv(here("Source_MBON_P2P", "metadata.csv"))
-
-#Merge photoquadrat.metadata and photoquadrat.cover
-#MBON.photoquadrat<- merge(MBON.photoquadrat.metadata,MBON.photoquadrat.cover, by = "Name", all.x = TRUE) 
-
-#CHECK wich date format you have in the files. Sometimes if you open the file with excel it may change the date format 
-#transform to date format
-#MBON.photoquadrat$Date <- as.Date(MBON.photoquadrat$Date,'%Y-%m-%d')
-#MBON.photoquadrat$Date <- as.Date(MBON.photoquadrat$Date,'%d/%m/%Y')
-
-#Eliminate colums with taxa categories (CATAMI) that were not used for the photoquadrats
-#as this codes search colsum= 0 in all the data frame , and remove those columns, we need to set lat ang long that have negative numbers in order to avoid being removed
-#MBON.photoquadrat$Latitude <- as.character(MBON.photoquadrat$Latitude)
-#MBON.photoquadrat$Longitude <- as.character(MBON.photoquadrat$Longitude)
-#library(tidyverse) 
-#MBON.photoquadrat <- MBON.photoquadrat %>% select_if(negate(function(col) is.numeric(col) && sum(col) <= 0))
-
-
-
-#Read data SOURCE MBON_AR_CO_EC_US--------
+#Read data MBON_AR_CO_EC_US_Robot--------
+#Photos random and robot annotations from 4 countries 
 # Source = https://coralnet.ucsd.edu/source/2048/
 
-#Set the working directory to the folder "Source_MBON" and read percent_cover.csv and metdata.csv files (downloaded "as it" from Coralnet source)
+#Set the working directory to the folder "Source_MBON_AR_CO_EC_US_Robot" and read percent_cover.csv and metdata.csv files (downloaded "as it" from Coralnet source)
 library(here)
-PQ.ALL.cover <- read.csv(here("Source_MBON", "percent_covers.csv"))
-PQ.ALL.metadata <- read.csv(here("Source_MBON", "metadata.csv"))
+PQ.ALL.cover <- read.csv(here("Source_MBON_AR_CO_EC_US_Robot", "percent_covers.csv"))
+PQ.ALL.metadata <- read.csv(here("Source_MBON_AR_CO_EC_US_Robot", "metadata.csv"))
 
 #Merge photoquadrat.metadata and photoquadrat.cover
 PQ.ALL<- merge(PQ.ALL.metadata,PQ.ALL.cover, by = "Name", all.x = TRUE) 
@@ -84,14 +59,14 @@ PQ.ALL$Comments <- as.factor(PQ.ALL$Comments)
 levels(PQ.ALL$Comments) <-  c("PQ.Human.Random", "PQ.Robot")
 
 
-#Read photoquadrats data from individual sources in COUNTRIES
-#Source_Galapagos ECUADOR(EC)-----
+#Read photoquadrats data from individual sources of each COUNTRY (random and robot)
+#Source_MBON_Galapagos ECUADOR(EC)-----
 #https://coralnet.ucsd.edu/source/1949/
 
-#Set the working directory to the folder "Source_Galapagos" and read percent_cover.csv and metdata.csv files (downloaded "as it" from Coralnet source)
+#Set the working directory to the folder "Source_MBON_Galapagos" and read percent_cover.csv and metdata.csv files (downloaded "as it" from Coralnet source)
 library(here)
-PQ.EC.cover <- read.csv(here("Source_Galapagos","percent_covers.csv"))
-PQ.EC.metadata <- read.csv(here("Source_Galapagos","metadata.csv"))
+PQ.EC.cover <- read.csv(here("Source_MBON_Galapagos","percent_covers.csv"))
+PQ.EC.metadata <- read.csv(here("Source_MBON_Galapagos","metadata.csv"))
 
 #Merge photoquadrat.metadata and photoquadrat.cover
 PQ.EC<- merge(PQ.EC.metadata,PQ.EC.cover, by = "Name", all.x = TRUE) 
@@ -361,4 +336,4 @@ correlations<- merge(PQ.ALL,VQ.Human.ALL, by = "Name",suffixes = c(".A",".H"))
 
 
 #Read file with differences between VQ.HUMAN and PQ.ROBOT for Bland-Altman plots
-FG <- read.csv("FG_diff.csv")
+#FG <- read.csv("FG_diff.csv")
