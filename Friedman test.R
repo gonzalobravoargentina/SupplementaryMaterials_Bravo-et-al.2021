@@ -53,15 +53,37 @@ ggboxplot(selfesteem, x = "time", y = "score", add = "point") +
 
 
 
+PQ_VQ_long.FG <- subset(PQ_VQ_long.FG,Comments!="PQ.Robot.bycountry") #extract PQ robot by country
+PQ_VQ_FG_stats <- split(PQ_VQ_long.FG, list(PQ_VQ_long.FG$country, PQ_VQ_long.FG$strata,PQ_VQ_long.FG$CATAMI))
+
+#apply wilcox test
+pairwise.wilcox <- lapply(PQ_VQ_FG_stats, function (j) (wilcox.test(j$cover.rel~j$Comments,paired = TRUE, p.adjust.method = "bonferroni")))
 
 
-#prepare data for analisis 
+
+
+#Prepare data for analisis 
 DF.friedman <- subset(PQ_VQ,Comments!="PQ.Robot.bycountry")
 
 DF.friedman <- DF.friedman %>%
-  select("Name", "country", "locality","site","Comments","Annotation.status","CRB","MOB","SC","MAF","MAEN","MAA","MAS","MAEC")
+  select("Name", "country", "locality","site","strata","Comments","Annotation.status","CRB","MOB","SC","MAF","MAEN","MAA","MAS","MAEC")
 
 DF.friedman.SC <- DF.friedman %>%
-  select("Name", "country", "locality","site","Comments","Annotation.status","SC")
+  select("Name", "country","locality","site","strata","Comments","Annotation.status","SC")
 
+DF.friedman.SC <- subset(DF.friedman.SC,country=="ARGENTINA"& site=="PUNTA CUEVAS" &strata=="HIGHTIDE")
 
+DF.friedman.SC <- DF.friedman.SC %>% group_by(Comments) %>% mutate(id = row_number())
+
+DF.friedman.SC %>%
+  group_by(Comments) %>%
+  get_summary_stats(SC, type = "common")
+
+ggboxplot(DF.friedman.SC, x = "Comments", y = "SC", add = "jitter")
+
+res.fried <- DF.friedman.SC %>% friedman_test(SC ~ Comments|id)
+res.fried
+
+pwc <- DF.friedman.SC %>%
+  wilcox_test(SC~Comments, paired = TRUE, p.adjust.method = "bonferroni")
+pwc

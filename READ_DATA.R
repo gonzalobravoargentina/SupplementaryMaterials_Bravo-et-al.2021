@@ -337,3 +337,4 @@ correlations<- merge(PQ.ALL,VQ.Human.ALL, by = "Name",suffixes = c(".A",".H"))
 
 #Read file with differences between VQ.HUMAN and PQ.ROBOT for Bland-Altman plots
 #FG <- read.csv("FG_diff.csv")
+
