@@ -4,7 +4,7 @@
 # percent_cover.csv
 
 #Visual quadrats folder has results from insitu "visual_quadrats"
-# argentina_visual.csd
+# argentina_visual.csv
 # colombia_visual.csv
 # galapagos_visual.csv
 # usa_visual.csv
@@ -28,9 +28,10 @@ library(data.table)
 
 #Set the working directory to the folder "Source_MBON_AR_CO_EC_US_Robot" and read percent_cover.csv and metdata.csv files (downloaded "as it" from Coralnet source)
 library(here)
-PQ.ALL.cover <- read.csv(here("Source_MBON_AR_CO_EC_US_Robot", "percent_covers.csv"))
-PQ.ALL.metadata <- read.csv(here("Source_MBON_AR_CO_EC_US_Robot", "metadata.csv"))
-
+#PQ.ALL.cover <- read.csv(here("Source_MBON_AR_CO_EC_US_Robot", "percent_covers.csv"))
+#PQ.ALL.metadata <- read.csv(here("Source_MBON_AR_CO_EC_US_Robot", "metadata.csv"))
+PQ.ALL.cover <- read.csv(here("Source_MBON_AR_CO_EC_US_Robot", "percent_covers_new.csv"))
+PQ.ALL.metadata <- read.csv(here("Source_MBON_AR_CO_EC_US_Robot", "metadata_new.csv"))
 #Merge photoquadrat.metadata and photoquadrat.cover
 PQ.ALL<- merge(PQ.ALL.metadata,PQ.ALL.cover, by = "Name", all.x = TRUE) 
 
