@@ -36,6 +36,7 @@ library(forcats)
 library(ggplot2)
 library(ggpubr)
 library(kableExtra)
+library(patchwork)
 library(formattable)
 
 library(caret)
@@ -147,7 +148,7 @@ The confusion matrix in numbers:
 
 ```{r}
 tbl <- cmm$table
-formattable(as.data.frame.matrix(tbl), list(area(row=TRUE)~color_tile("transparent", "steelblue")))
+formattable(as.data.frame.matrix(tbl), list(area(row=T)~color_tile("transparent", "steelblue")))
 
 ```
 
@@ -171,7 +172,7 @@ round(100*cmm$overall, 2)
 ```
 
 
-The classifier produces a set of five "guesses" for the labels and a confidence for each guess (analogous to a certanty percent) for each points, and assing to the point the label with hoghest confidence. The variablility of the confidence of the first suggestion is a good indicator of the performance of the classifier for each of the labels.
+The classifier produces a set of five "guesses" for the labels and a confidence for each guess (analogous to a certainty percent) for each points, and assign to the point the label with highest confidence. The variability of the confidence of the first suggestion is a good indicator of the performance of the classifier for each of the labels.
 
 ```{r}
 
@@ -204,4 +205,92 @@ pp + geom_violin(draw_quantiles = 0.5, fill="steelblue", alpha=0.5) +
 
 ## Similarity with visual
 
+The idea here is to test if there is differences between the quadrat surveyed in the field and analysed visually with the result of the classifier over the same quadrats.
+
+As we don't label every point in the quadrat in the field, it is not possible to make a point-to-point comparison. However, if we estimate the cover of each of the categories in each of the quadrats and do the same with the result of the classifier, it will be possible to calculate a distance metric that represent how different are the estimates. AS we are dealing with counts (number of points in each category), a Bray-Curtis distance is appropriate. Here the hypothesis is that if both methods produce the same result, the BC distance must be zero.
+
+For each quadrat it is possible to make a community matrix: 2 rows, visual and machine estimates, and n columns, being n the number of labels). Then we can calculate the BC distance comparing the two methods. 
+
+Then we can compare the BC distances (as proportions) using a generalized nested mixed models.
+
+Method:
+
+1. bind visual cover estimates from all sites, except USA, as the USA photoquadrats does not coincide with the quadrats used for visual estimates
+
+```{r}
+## bind visual data
+
+CM_Visual <- bind_rows(read.csv("../Visual_quadrats/argentina_visual.csv"),
+                     read.csv("../Visual_quadrats/colombia_visual.csv"),
+                     read.csv("../Visual_quadrats/galapagos_visual.csv"))
+
+
+## make community matrix from robot
+CM_Robot <- dfRobot %>% group_by(Name, Label) %>% summarise(n = n())
+## make it wide
+CM_Robot <- CM_Robot %>% pivot_wider(id_cols = 'Name', names_from = 'Label', values_from = 'n')
+## replace NA by zero
+CM_Robot[is.na(CM_Robot)] <- 0
+
+
+## match the Names with visual (dropping USA quadrats)
+visualQD <- unique(CM_Visual$Name)
+CM_Robot = CM_Robot[CM_Robot$Name %in% visualQD,]
+
+
+```
+
+We will use the only the labels produced by the classifier as the label set. We will drop not used labels from the visual and recalculate the cover.
+
+```{r}
+## calculate BC index
+BC <- data.frame(Country=character(), Site=character(), Strata=character(), BC=numeric())
+for (i in 1:nrow(CM_Visual)){
+  robotIndex <- which(CM_Robot$Name==CM_Visual$Name[i])
+  if (length(robotIndex) > 0 ){
+    CM_one <- bind_rows(CM_Visual[i,21:33], CM_Robot[robotIndex,2:13])
+    CM_one[is.na(CM_one)] <- 0
+    BC <- bind_rows(BC, 
+                    data.frame(Country = CM_Visual$country[i],
+                               Site = CM_Visual$site[i],
+                               Strata = CM_Visual$strata[i],
+                               BC = as.numeric(vegdist(CM_one, na.rm = T))))
+  }else {
+    print(paste0("NOT FOUND in Robot: ", CM_Visual$Name[i]))
+  }
+}
+```
+
+
+
+
+```{r, fig.height=12}
+pp_ARG <- ggplot(BC %>% filter(Country=="ARGENTINA"), aes(Strata, BC))
+pp_ARG <- pp_ARG + geom_boxplot(width=0.5, aes(fill=Strata), colour="grey50") + 
+  ylim(0,0.8) + 
+  labs(title="ARGENTINA", x="", y=" ") +
+  facet_grid(~Site) + 
+  theme_pubclean() + 
+  theme(legend.position = 'none')
+
+pp_COL <- ggplot(BC %>% filter(Country=="COLOMBIA"), aes(Strata, BC))
+pp_COL <- pp_COL + geom_boxplot(width=0.5, aes(fill=Strata), colour="grey50") + 
+  ylim(0,0.8) + 
+  labs(title="COLOMBIA", x="", y="Bray-Curtis distance") +
+  facet_grid(~Site) + 
+  theme_pubclean() + 
+  theme(legend.position = 'none')
+
+pp_ECU <- ggplot(BC %>% filter(Country=="ECUADOR"), aes(Strata, BC))
+pp_ECU <- pp_ECU + geom_boxplot(width=0.5, aes(fill=Strata), colour="grey50") + 
+  ylim(0,0.8) + 
+  labs(title="ECUADOR", x="", y=" ") +
+  facet_grid(~Site) + 
+  theme_pubclean() + 
+  theme(legend.position = 'none')
+
+pp_ARG / pp_COL / pp_ECU
+
+
+```
 
