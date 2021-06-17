@@ -1,5 +1,5 @@
-#CORALNET Source folders contains files with results:
-# annotations.csv
+#CORALNET Source folders contains files with data:
+# annotations.csv (info about each pooint)
 # metadata.csv
 # percent_cover.csv
 
@@ -26,10 +26,8 @@ library(data.table)
 #Photos random and robot annotations from 4 countries 
 # Source = https://coralnet.ucsd.edu/source/2048/
 
-#Set the working directory to the folder "Source_MBON_AR_CO_EC_US_Robot" and read percent_cover.csv and metdata.csv files (downloaded "as it" from Coralnet source)
+#Set the working directory to the folder "Source_MBON_AR_CO_EC_US_Robot" and read: percent_cover.csv and metdata.csv files (downloaded "as it" from Coralnet source)
 library(here)
-#PQ.ALL.cover <- read.csv(here("Source_MBON_AR_CO_EC_US_Robot", "percent_covers.csv"))
-#PQ.ALL.metadata <- read.csv(here("Source_MBON_AR_CO_EC_US_Robot", "metadata.csv"))
 PQ.ALL.cover <- read.csv(here("Source_MBON_AR_CO_EC_US_Robot", "percent_covers_new.csv"))
 PQ.ALL.metadata <- read.csv(here("Source_MBON_AR_CO_EC_US_Robot", "metadata_new.csv"))
 #Merge photoquadrat.metadata and photoquadrat.cover
