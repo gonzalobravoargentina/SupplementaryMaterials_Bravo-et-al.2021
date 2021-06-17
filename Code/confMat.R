@@ -1,8 +1,15 @@
-## read confusion matrix from Gonza
+## read confusion matrix from Coralnet output and calculate some stats using caret package
+## EK 20210617
+
+
 library(caret)
 library(stringr)
 
-df = read.csv("Data/SA_matrix_20210611csv.csv", header=FALSE)
+dataDir = "./confusion_matrix/New model/"
+fileName = "confusion_matrix_full_0.csv"
+
+
+df = read.csv(file.path(dataDir, fileName), header=FALSE)
 
 ##get the Label. It is tricky as the first label has two parenthesis. The valid label is the last one in parenthesis
 tblLabels = str_split( df[,1], "\\(")
