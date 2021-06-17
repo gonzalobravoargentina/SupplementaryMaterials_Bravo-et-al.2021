@@ -229,13 +229,33 @@ levels(VQ.Human.ALL$Comments) <-  c("VQ.Human")
 
 
 
-#READ Photoquadrats by HUMAN-------- 
-PQ.Human.ALL <- read.csv(here("Human_photoquadrats","photoquadrat_human_AR_EC_CO_US.csv"))
-#PQ.Human.ALL$Date <- as.Date(PQ.Human.ALL$Date,'%Y-%m-%d')
-PQ.Human.ALL$Date <- as.Date(PQ.Human.ALL$Date,'%d/%m/%Y')
+#READ data MBON_AR_CO_EC_US_Human-------- 
+library(here)
+PQ.Human.ALL.cover <- read.csv(here("Source_MBON_AR_CO_EC_US_Human","percent_covers.csv"))
+PQ.Human.ALL.metadata <- read.csv(here("Source_MBON_AR_CO_EC_US_Human","metadata.csv"))
+
+#Merge photoquadrat.metadata and photoquadrat.cover
+PQ.Human.ALL<- merge(PQ.Human.ALL.metadata,PQ.Human.ALL.cover, by = "Name", all.x = TRUE) 
+
+#Remove original data frames from enviroment
+rm(PQ.Human.ALL.cover)
+rm(PQ.Human.ALL.metadata)
+
+#CHECK wich date format you have in the files. Sometimes if you open the file with excel it may change the date format 
+#transform to date format
+PQ.Human.ALL$Date <- as.Date(PQ.Human.ALL$Date,'%Y-%m-%d')
+#PQ.Human.ALL$Date <- as.Date(PQ.Human.ALL$Date,'%d/%m/%Y')
+
 PQ.Human.ALL$Comments <- as.factor(PQ.Human.ALL$Comments)
 levels(PQ.Human.ALL$Comments) <-  c("PQ.Human")
 
+
+#OLD FILE 
+#PQ.Human.ALL <- read.csv(here("Source_MBON_AR_CO_EC_US_Human","photoquadrat_human_AR_EC_CO_US.csv"))
+#PQ.Human.ALL$Date <- as.Date(PQ.Human.ALL$Date,'%Y-%m-%d')
+#PQ.Human.ALL$Date <- as.Date(PQ.Human.ALL$Date,'%d/%m/%Y')
+#PQ.Human.ALL$Comments <- as.factor(PQ.Human.ALL$Comments)
+#levels(PQ.Human.ALL$Comments) <-  c("PQ.Human")
 #write.csv(PQ.Human.ALL,file="PQ.Human.ALL.csv", row.names=FALSE)
 
 
