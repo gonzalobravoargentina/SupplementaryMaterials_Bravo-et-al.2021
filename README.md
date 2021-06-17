@@ -9,12 +9,19 @@
 - galapagos_visual.csv
 - usa_visual.csv
 
-#### Source_MBON_P2P
+#### Source_MBON_AR_CO_EC_US_Robot
 - annotations.csv
 - metadata.csv
 - percent_cover.csv
 
-CoralNet Source: https://coralnet.ucsd.edu/source/1972/
+CoralNet Source: https://coralnet.ucsd.edu/source/2048/
+
+#### Source_MBON_AR_CO_EC_US_Human
+- annotations.csv
+- metadata.csv
+- percent_cover.csv
+
+CoralNet Source: https://coralnet.ucsd.edu/source/2268/
 
 #### Source_Galapagos
 - annotations.csv
