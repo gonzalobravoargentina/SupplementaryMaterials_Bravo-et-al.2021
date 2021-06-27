@@ -128,6 +128,7 @@ CoralNet uses 7/8 of the data points to train the classification engine and 1/8 
 
 ```{r}
 cm <- read.csv(file.path(confmatDir, "New model/confusion_matrix_full_0.csv"), header=FALSE)
+
 ##get the Label. It is tricky as the first label has two parenthesis. The valid label is the last one in parenthesis
 tblLabels <- str_split( cm[,1], "\\(")
 tblLabels <- gsub("\\)", "", unlist(lapply(tblLabels, tail,1)))
@@ -148,7 +149,8 @@ The confusion matrix in numbers:
 
 ```{r}
 tbl <- cmm$table
-formattable(as.data.frame.matrix(tbl), list(area(row=T)~color_tile("transparent", "steelblue")))
+tblDF <- as.data.frame.matrix(tbl)
+formattable(tblDF, list(area(row=TRUE)~color_tile("transparent", "steelblue")))
 
 ```
 
@@ -199,7 +201,59 @@ pp + geom_violin(draw_quantiles = 0.5, fill="steelblue", alpha=0.5) +
 ```
 
 
-#### Funtional group labels
+#### Functional group labels
+
+
+Analysis of the performance of the classifier on **Functional Groups**
+
+```{r}
+cm <- read.csv(file.path(confmatDir, "New model/confusion_matrix_func_0.csv"), header=FALSE)
+
+
+##get the Label. It is tricky as the first label has two parenthesis. The valid label is the last one in parenthesis
+tblLabels <- str_split( cm[,1], "\\(")
+tblLabels <- gsub("\\)", "", unlist(lapply(tblLabels, tail,1)))
+nLabels <- nrow(cm)
+## modify here to select the first n lables
+#nLabels = 7
+
+tt <- as.table(as.matrix(cm[1:nLabels,2:(nLabels+1)]))
+rownames(tt) <- tblLabels[1:nLabels]
+colnames(tt) <- tblLabels[1:nLabels]
+
+cmm =confusionMatrix(tt)
+
+```
+
+The confusion matrix in numbers: 
+
+
+```{r}
+tbl <- cmm$table
+formattable(as.data.frame.matrix(tbl), list(area(row=T)~color_tile("transparent", "steelblue")))
+
+```
+
+
+The confusion matrix is (in percentage of row totals):
+
+```{r}
+tbl <- round(100*prop.table(cmm$table, margin = 1),1)
+formattable(as.data.frame.matrix(tbl), list(area(row=TRUE)~color_tile("transparent", "coral")))
+
+```
+
+
+
+The general accuracy of the classifier is **`r round(100*cmm$overall[1],2)`%**.  
+
+In %:
+
+```{r}
+round(100*cmm$overall, 2)
+```
+
+
 
 
 
@@ -224,6 +278,7 @@ CM_Visual <- bind_rows(read.csv("../Visual_quadrats/argentina_visual.csv"),
                      read.csv("../Visual_quadrats/colombia_visual.csv"),
                      read.csv("../Visual_quadrats/galapagos_visual.csv"))
 
+CM_VisualLong <- CM_Visual %>% pivot_longer(cols = 21:33, names_to = 'Label', values_to = 'Count' )
 
 ## make community matrix from robot
 CM_Robot <- dfRobot %>% group_by(Name, Label) %>% summarise(n = n())
@@ -239,6 +294,8 @@ CM_Robot = CM_Robot[CM_Robot$Name %in% visualQD,]
 
 
 ```
+
+#### Full Label Set
 
 We will use the only the labels produced by the classifier as the label set. We will drop not used labels from the visual and recalculate the cover.
 
@@ -259,6 +316,8 @@ for (i in 1:nrow(CM_Visual)){
     print(paste0("NOT FOUND in Robot: ", CM_Visual$Name[i]))
   }
 }
+BC$Strata <- factor(BC$Strata, levels = c("LOWTIDE", "MIDTIDE", "HIGHTIDE"))
+
 ```
 
 
@@ -293,4 +352,149 @@ pp_ARG / pp_COL / pp_ECU
 
 
 ```
+
+
+#### Reduced Label Set
+
+Let's try to reduce the number of labels to the most representative ones. It makes sense as the infrequent labels have poorly accuracy in the classifier as the number of training points is very low.
+
+Try with the labels that are present in 85% of the points in the Visual file:
+
+This is the number of points and accumulated % per label:
+
+```{r}
+tt = table(dfRobot$Label)
+sort(tt, decreasing = T)
+```
+
+and the accumulated %. Let's pick the labels that accumulate up to 95% of the point
+
+```{r}
+labelAcum <- CM_VisualLong %>% group_by(Label) %>% 
+  summarise(n=sum(Count, na.rm=T)) %>% 
+  arrange(-n) %>% 
+  mutate(nPercent = round(100*n/sum(n), 2), pAcum = cumsum(nPercent))
+
+kable(labelAcum, caption = "% of points per label, accumulated") %>% 
+  kable_styling("striped", full_width = FALSE)
+
+labels95 <- labelAcum$Label[labelAcum$pAcum<=96]
+
+labels95
+
+```
+
+and repeat the BC analysis, including only **`r paste0(labels95, collapse=",")`**...
+
+
+
+```{r}
+## Filter robot labels using selected visual labels
+CM_Robot5 <- CM_Robot %>% select(Name, contains(labels95))
+CM_Visual5 <- CM_Visual %>% select(Name, country, site, strata, contains(labels95))
+
+## calculate BC index
+BC <- data.frame(Country=character(), Site=character(), Strata=character(), BC=numeric())
+for (i in 1:nrow(CM_Visual)){
+  robotIndex <- which(CM_Robot5$Name==CM_Visual$Name[i])
+  if (length(robotIndex) > 0 ){
+    CM_one <- bind_rows(CM_Visual5[i,5:ncol(CM_Visual5)], CM_Robot5[robotIndex,2:ncol(CM_Robot5)])
+    CM_one[is.na(CM_one)] <- 0
+    BC <- bind_rows(BC, 
+                    data.frame(Country = CM_Visual$country[i],
+                               Site = CM_Visual$site[i],
+                               Strata = CM_Visual$strata[i],
+                               BC = as.numeric(vegdist(CM_one, na.rm = T))))
+  }else {
+    print(paste0("NOT FOUND in Robot: ", CM_Visual$Name[i]))
+  }
+}
+BC$Strata <- factor(BC$Strata, levels = c("LOWTIDE", "MIDTIDE", "HIGHTIDE"))
+```
+
+
+
+
+```{r, fig.height=12}
+pp_ARG <- ggplot(BC %>% filter(Country=="ARGENTINA"), aes(Strata, BC))
+pp_ARG <- pp_ARG + geom_boxplot(width=0.5, aes(fill=Strata), colour="grey50") + 
+  ylim(0,0.8) + 
+  labs(title="ARGENTINA", x="", y=" ") +
+  facet_grid(~Site) + 
+  theme_pubclean() + 
+  theme(legend.position = 'none')
+
+pp_COL <- ggplot(BC %>% filter(Country=="COLOMBIA"), aes(Strata, BC))
+pp_COL <- pp_COL + geom_boxplot(width=0.5, aes(fill=Strata), colour="grey50") + 
+  ylim(0,0.8) + 
+  labs(title="COLOMBIA", x="", y="Bray-Curtis distance") +
+  facet_grid(~Site) + 
+  theme_pubclean() + 
+  theme(legend.position = 'none')
+
+pp_ECU <- ggplot(BC %>% filter(Country=="ECUADOR"), aes(Strata, BC))
+pp_ECU <- pp_ECU + geom_boxplot(width=0.5, aes(fill=Strata), colour="grey50") + 
+  ylim(0,0.8) + 
+  labs(title="ECUADOR", x="", y=" ") +
+  facet_grid(~Site) + 
+  theme_pubclean() + 
+  theme(legend.position = 'none')
+
+pp_ARG / pp_COL / pp_ECU
+
+
+```
+
+Description of the BC values
+
+```{r}
+BCsummary <- BC %>% group_by(Country, Site, Strata) %>% 
+  summarize(n = n(), BCmean = mean(BC), BCsd = sd(BC), BCmin = min(BC), BCmax = max(BC),
+            BCq25 = quantile(BC, 0.25), BCmedian = median(BC), BCq75 = quantile(BC, 0.75))
+
+kable(BCsummary, digits=2) %>% kable_styling("striped", full_width = FALSE)
+```
+
+
+#### Nested model 
+
+
+Let's create additional variables: Quadrat and Site2 which are the sites coded as A, B, C
+
+
+```{r}
+
+BC$Quadrat <- rep(1:10, 27)
+BC$Site2 <- rep(c(rep("A",30), rep("B", 30), rep("C", 30)), 3)
+```
+
+and fit a binomial nested model with BC as dependent variables and Country, Site and Strata as fixed factors and Quadrat as random factor. 
+
+```{r}
+library(lme4)
+library(multcomp)
+
+par(mar=c(7,7,7,7))
+par(oma=c(1,1,1,1))
+
+model = glmer(BC ~ Country + Site2 + Strata + (Country/Site2/Strata) + (1|Quadrat), data=BC, family=binomial)
+summary(model)
+
+testStrata = glht(model, linfct = mcp("Strata" = "Tukey"))
+summary(testStrata)
+plot(confint(testStrata), cex=0.5)
+
+testSite2 = glht(model, linfct = mcp("Site2" = "Tukey"))
+summary(testSite2)
+plot(confint(testSite2))
+
+testCountry = glht(model, linfct = mcp("Country" = "Tukey"))
+summary(testCountry)
+plot(confint(testCountry))
+```
+
+
+## Similarity with visual: Functional groups
+
+
 
