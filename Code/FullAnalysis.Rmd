@@ -132,7 +132,7 @@ cm <- read.csv(file.path(confmatDir, "New model/confusion_matrix_full_0.csv"), h
 ##get the Label. It is tricky as the first label has two parenthesis. The valid label is the last one in parenthesis
 tblLabels <- str_split( cm[,1], "\\(")
 tblLabels <- gsub("\\)", "", unlist(lapply(tblLabels, tail,1)))
-nLabels <- nrow(cm)
+nLabels <- nrow(cm) 
 ## modify here to select the first n lables
 #nLabels = 7
 
@@ -492,6 +492,21 @@ testCountry = glht(model, linfct = mcp("Country" = "Tukey"))
 summary(testCountry)
 plot(confint(testCountry))
 ```
+
+
+```{r}
+BCmean <- round(mean(BC$BC),3)
+BCn <- nrow(BC)
+BCsd <- sd(BC$BC)
+BCmargin <- qt(0.975,df=BCn-1)*BCsd/sqrt(BCn)
+BCupper <- round(BCmean + BCmargin, 3)
+BClower <- round(BCmean - BCmargin, 3) 
+
+```
+
+
+AS demonstrated, the classifier is insensitive to the variability produced by Country, Site and Strata, being equally efficient no matter the source of the quadrat. **In general, the difference between the classifier and the visual estimate of the community cover of a mean quadrat is `r BCmean` with a 95% confidence interval of [`r BClower` - `r BCupper`]**
+
 
 
 ## Similarity with visual: Functional groups
