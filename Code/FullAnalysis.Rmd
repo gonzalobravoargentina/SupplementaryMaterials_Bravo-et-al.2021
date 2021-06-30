@@ -512,4 +512,43 @@ AS demonstrated, the classifier is insensitive to the variability produced by Co
 ## Similarity with visual: Functional groups
 
 
+TODO
+
+
+
+
+## Figure 2: new proposal
+
+I propose to plot the cover estimates from field (visual) along with estimated of the robot for the main labels only, the same included in the GMM analysis.
+
+
+
+```{r}
+## make long DFs
+CM_Visual5_long <- CM_Visual5 %>% pivot_longer(cols = 5:9, names_to = "label", values_to = 'Cover')
+CM_Visual5_long$source <- "visual"
+
+CM_Robot5_long <- CM_Robot5 %>% pivot_longer(cols = 2:6, names_to = "label", values_to = 'Cover')
+CM_Robot5_long$source <- "robot"
+
+CM_compare <- bind_rows(CM_Visual5_long, CM_Robot5_long)
+CM_compare$countryCode <- str_split(CM_compare$Name, "_", simplify = T)[,1]
+CM_compare$siteCode <- str_split(CM_compare$Name, "_", simplify = T)[,3]
+CM_compare$strataCode <- str_split(CM_compare$Name, "_", simplify = T)[,4]
+CM_compare$strataCode <- factor(CM_compare$strataCode, levels = c("LT", "MT", "HT"))
+
+```
+
+
+
+```{r fig.width=12, fig.height=10}
+
+pp <- ggplot(CM_compare, aes(label, Cover))
+pp + geom_boxplot(position=position_dodge(1), aes(fill=source), outlier.size = 0.3) +
+  labs(x="", y="Cover %") + 
+  scale_colour_brewer(palette = "Greens", aesthetics = 'fill') + 
+  facet_grid(countryCode~strataCode) + 
+  theme_pubclean(base_size=14)
+
+```
 
