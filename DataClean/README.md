@@ -8,3 +8,7 @@ This directory contains the data cleaned and standardised. There community matri
 - `CM_visual.csv`: Cover of the quadrat estimated in the field. Used to compare the performance against the Robot labelling of the photo quadrats 
 - `CM_HumanRobot`: bind of Human and Robot community matrices only with common labels. `NA` has been replace by zero.
 - `CM_VisualRobot`: bind of Visual (field) and Robot community matrices only with common labels. `NA` has been replace by zero. 
+
+- `DF_HumanRobot`: long_format version of the combined community matrices of Human and Robot. Labels are under `Label` and cover estimates under `Cover`
+- `DF_VisualRobot`: long_format version of the combined community matrices of Visual and Robot. Labels are under `Label` and cover estimates under `Cover`
+

@@ -32,8 +32,10 @@ dfRobot$site <- ifelse(dfRobot$country=='US', str_sub(dfRobot$Name,3,6),str_spli
 dfRobot$strata <- ifelse(dfRobot$country=='US', str_split(dfRobot$Name, "_", simplify = T)[,3],
                          str_split(dfRobot$Name, "_", simplify = T)[,4])
 
-## recode strata for US. high is HT and low is MT
+## recode strata for US. high is HT and low is MT. REorder to LT, MT, HT
 dfRobot$strata <- recode_factor(dfRobot$strata, low="MT", high="HT")
+dfRobot$strata <- factor(dfRobot$strata, levels = c("LT", "MT", "HT"))
+
 ## clean US name
 dfRobot$Name <- gsub("_robot", "", dfRobot$Name)
 dfRobot$Name <- gsub(".jpg", "", dfRobot$Name)
@@ -66,6 +68,8 @@ dfHuman$strata <- ifelse(dfHuman$country=='US', str_split(dfHuman$Name, "_", sim
                          str_split(dfHuman$Name, "_", simplify = T)[,4])
 ## recode strata for US. high is HT and low is MT
 dfHuman$strata <- recode_factor(dfHuman$strata, low="MT", high="HT")
+dfHuman$strata <- factor(dfHuman$strata, levels = c("LT", "MT", "HT"))
+
 ## clean US name
 dfHuman$Name <- gsub("_human", "", dfHuman$Name)
 dfHuman$Name <- gsub(".jpg", "", dfHuman$Name)
@@ -101,6 +105,7 @@ dfVisual$strata <- ifelse(dfVisual$country=='US', str_split(dfVisual$Name, "_", 
                          str_split(dfVisual$Name, "_", simplify = T)[,4])
 ## recode strata for US. high is HT and low i_s MT
 dfVisual$strata <- recode_factor(dfVisual$strata, low="MT", high="HT")
+dfVisual$strata <- factor(dfVisual$strata, levels = c("LT", "MT", "HT"))
 
 ## re arrange the fields
 dfVisual <- dfVisual %>% relocate(Name, source, country, site, strata, everything())
@@ -112,3 +117,44 @@ dfVisual[is.na(dfVisual)] <- 0
 write_csv(dfVisual, file.path(outDir, "CM_visual.csv"))
 
 ############################
+
+
+
+############################
+## Create matching ComMat with common labels only
+## the first 5 cols are id cols
+
+## pick labels and common labels
+labelsRobot <- colnames(dfRobot)[6:ncol(dfRobot)]
+labelsHuman <- colnames(dfHuman)[6:ncol(dfHuman)]
+labelsVisual <- colnames(dfHuman)[6:ncol(dfVisual)]
+
+labelsHumRob <- intersect(labelsHuman, labelsRobot)
+labelsVisRob <- intersect(labelsVisual, labelsRobot)
+
+## bind df by rows and select only common labels
+dfHumRob <- bind_rows(dfHuman, dfRobot)
+dfHumRob <- dfHumRob %>% dplyr::select(Name:strata, contains(labelsHumRob))
+dfHumRob[is.na(dfHumRob)] <- 0
+
+dfVisRob <- bind_rows(dfVisual, dfRobot)
+dfVisRob <- dfVisRob %>% dplyr::select(Name:strata, contains(labelsVisRob))
+dfVisRob[is.na(dfVisRob)] <- 0
+
+## Save data frames
+write_csv(dfHumRob, file.path(outDir, "CM_HumanRobot.csv"))
+write_csv(dfVisRob, file.path(outDir, "CM_VisualRobot.csv"))
+
+##############################
+
+
+
+##############################
+## Long format data frame of binded community matrices
+## labels are under "Label" and covers under "Cover"
+
+df_HumanRobot <- dfHumRob %>%  pivot_longer(cols = 6:25, names_to = 'Label', values_to = 'Cover')
+df_VisualRobot <- dfVisRob %>%  pivot_longer(cols = 6:18, names_to = 'Label', values_to = 'Cover')
+
+write_csv(df_HumanRobot, file.path(outDir, "DF_HumanRobot.csv"))
+write_csv(df_VisualRobot, file.path(outDir, "DF_VisualRobot.csv"))
