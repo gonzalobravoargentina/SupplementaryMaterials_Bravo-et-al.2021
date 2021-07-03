@@ -158,3 +158,27 @@ df_VisualRobot <- dfVisRob %>%  pivot_longer(cols = 6:18, names_to = 'Label', va
 
 write_csv(df_HumanRobot, file.path(outDir, "DF_HumanRobot.csv"))
 write_csv(df_VisualRobot, file.path(outDir, "DF_VisualRobot.csv"))
+
+
+
+#############################
+## Functional groups
+
+CM_FG_Robot <- dfRobot %>% group_by(Name) %>% 
+  summarise(ALGAE = sum(MAF,MAEN,MAA,MAS,MALCB,MAEC, na.rm=T),
+            SUBSTRATE = SC,
+            INVERTEBRATES = sum(CRB,MOB,WPOT,MOG, na.rm=T))
+
+CM_FG_Visual <- dfVisual %>% group_by(Name) %>% 
+  summarise(ALGAE = sum(MAF,MAEN,MAA,MAG,MAS,MALCB, na.rm=T),
+            SUBSTRATE = SC,
+            INVERTEBRATES = sum(CRB,MOB,CNTR,WPOT,MOG,CNCA, na.rm = T))
+
+CM_FG_Human <- dfHuman %>% group_by(Name) %>% 
+  summarise(ALGAE = sum(MAF,MAEN,MAA,MAS,MALCB,MAEC, na.rm=T),
+            SUBSTRATE = SC,
+            INVERTEBRATES = sum(CRB,MOB,WPOT,MOG, na.rm=T))
+
+write_csv(CM_FG_Robot, file.path(outDir, "CM_FG_Robot.csv"))
+write_csv(CM_FG_Human, file.path(outDir, "CM_FG_Human.csv"))
+write_csv(CM_FG_Visual, file.path(outDir, "CM_FG_Visual.csv"))

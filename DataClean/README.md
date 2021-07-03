@@ -12,3 +12,7 @@ This directory contains the data cleaned and standardised. There community matri
 - `DF_HumanRobot`: long_format version of the combined community matrices of Human and Robot. Labels are under `Label` and cover estimates under `Cover`
 - `DF_VisualRobot`: long_format version of the combined community matrices of Visual and Robot. Labels are under `Label` and cover estimates under `Cover`
 
+- `CM_FG_Robot`: Community matrix returned by Robot, recoded into functional groups
+- `CM_FG_Human`: Community matrix labelled by human from photo quadrats, recoded into functional groups
+- `CM_FG_Visual`: Community matrix labelled in the field by human from real quadrats, recoded into functional groups
+
