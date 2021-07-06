@@ -4,8 +4,9 @@ library(readr)
 library(ggplot2)
 library(dplyr)
 
-## Human Robot
-
+###################
+## Human vs Robot
+##################
 DF_HR <- read_csv("./DataClean/DF_HumanRobot.csv", col_types = cols())
 
 sourceColor <- c(visual="#f7fcb9", human="#addd8e", robot="#31a354")
@@ -16,6 +17,14 @@ pp + geom_boxplot(position=position_dodge(1), aes(fill=source), outlier.size = 0
   facet_grid(country~.) + 
   theme_pubclean(base_size=14)
 
+
+## if log transformed, you can see better the labels with low cover values
+pp <- ggplot(DF_HR, aes(Label, log10(Cover+1)))
+pp + geom_boxplot(position=position_dodge(1), aes(fill=source), outlier.size = 0.3) +
+  labs(x="", y="Cover % (Log transformed)") + 
+  scale_colour_manual("Source", values = sourceColor, aesthetics = 'fill') + 
+  facet_grid(country~.) + 
+  theme_pubclean(base_size=14)
 
 ## Let's try plotting the DIFFERENCE, so we can see all the labels around zero
 DF_HRdiff <- DF_HR %>% group_by(Name, country, site, strata, Label) %>% 
@@ -39,4 +48,38 @@ pp + geom_boxplot(position=position_dodge(1), aes(fill=source), outlier.size = 0
   facet_grid(country~.) + 
   theme_pubclean(base_size=14)
 
+
+
+###################
+## Visual vs Robot
+##################
+
+DF_VR <- read_csv("./DataClean/DF_VisualRobot.csv", col_types = cols())
+
+pp <- ggplot(DF_VR %>% filter(country != "US"), aes(Label, Cover))
+pp + geom_boxplot(position=position_dodge(1), aes(fill=source), outlier.size = 0.3) +
+  labs(x="", y="Cover %") + 
+  scale_colour_manual("Source", values = sourceColor, aesthetics = 'fill') + 
+  facet_grid(country~.) + 
+  theme_pubclean(base_size=14)
+
+## With Log transformation
+
+pp <- ggplot(DF_VR %>% filter(country != "US"), aes(Label, log10(Cover+1)))
+pp + geom_boxplot(position=position_dodge(1), aes(fill=source), outlier.size = 0.3) +
+  labs(x="", y="Cover %") + 
+  scale_colour_manual("Source", values = sourceColor, aesthetics = 'fill') + 
+  facet_grid(country~.) + 
+  theme_pubclean(base_size=14)
+
+## Plot the DIFFERENCE
+DF_VRdiff <- DF_VR %>% group_by(Name, country, site, strata, Label) %>% 
+  summarise(CoverDiff = Cover[source=="visual"] - Cover[source=="robot"])
+
+pp <- ggplot(DF_VRdiff, aes(Label, CoverDiff))
+pp + geom_boxplot(position=position_dodge(1),outlier.size = 0.3) +
+  labs(x="", y="Cover %") + 
+  #scale_colour_manual("Source", values = sourceColor, aesthetics = 'fill') + 
+  facet_grid(country~.) + 
+  theme_pubclean(base_size=14)
 
