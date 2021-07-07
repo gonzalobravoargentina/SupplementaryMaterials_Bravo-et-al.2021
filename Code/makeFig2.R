@@ -26,6 +26,17 @@ pp + geom_boxplot(position=position_dodge(1), aes(fill=source), outlier.size = 0
   facet_grid(country~.) + 
   theme_pubclean(base_size=14)
 
+
+## Idem but without transforming the variable but using log scale Y-axis
+pp <- ggplot(DF_HR, aes(Label, Cover))
+pp + geom_boxplot(position=position_dodge(1), aes(fill=source), outlier.size = 0.3) +
+  labs(x="", y="Cover %") + 
+  scale_y_log10()  +
+  scale_colour_manual("Source", values = sourceColor, aesthetics = 'fill') + 
+  facet_grid(country~.) + 
+  theme_pubclean(base_size=14)
+
+
 ## Let's try plotting the DIFFERENCE, so we can see all the labels around zero
 DF_HRdiff <- DF_HR %>% group_by(Name, country, site, strata, Label) %>% 
   summarise(CoverDiff = Cover[source=="human"] - Cover[source=="robot"])
@@ -46,6 +57,43 @@ pp + geom_boxplot(position=position_dodge(1), aes(fill=source), outlier.size = 0
   labs(x="", y="Cover %") + 
   scale_colour_manual("Source", values = sourceColor, aesthetics = 'fill') + 
   facet_grid(country~.) + 
+  theme_pubclean(base_size=14)
+
+
+
+
+## Bar plot with confidence intervals
+DF_HRmean <- DF_HR %>% group_by(country, Label, source) %>% 
+  summarise(Cover.mean = mean(Cover, na.rm=T),
+            Cover.sd = sd(Cover, na.rm=T),
+            Cover.n = n(),
+            Cover.CIlower = Cover.mean - 1.96*Cover.sd/sqrt(Cover.n), 
+            Cover.CIupper = Cover.mean + 1.96*Cover.sd/sqrt(Cover.n))
+
+pp <- ggplot(DF_HRmean, aes(Label, Cover.mean, fill=source))
+pp + geom_bar(stat="identity", position=position_dodge(1), aes(fill=source)) +
+  geom_errorbar(aes(ymin=Cover.CIlower, ymax=Cover.CIupper), width = 0.2, position=position_dodge(1)) + 
+  labs(x="", y="Cover %") + 
+  scale_colour_manual("Source", values = sourceColor, aesthetics = 'fill') + 
+  facet_grid(country~.) + 
+  theme_pubclean(base_size=14)
+
+
+## Cover ~strata faceted by country and label. mean and sd calculated using log of Cover+1
+DF_HRmean <- DF_HR %>% group_by(country, strata, Label, source) %>% 
+  summarise(Cover.mean = mean(log10(Cover+1), na.rm=T),
+            Cover.sd = sd(log10(Cover+1), na.rm=T),
+            Cover.n = n(),
+            Cover.CIlower = Cover.mean - 1.96*Cover.sd/sqrt(Cover.n), 
+            Cover.CIupper = Cover.mean + 1.96*Cover.sd/sqrt(Cover.n))
+
+pp <- ggplot(DF_HRmean, aes(strata, Cover.mean, fill=source))
+pp + geom_bar(stat="identity", position=position_dodge(1), aes(fill=source)) +
+  geom_errorbar(aes(ymin=Cover.CIlower, ymax=Cover.CIupper), width = 0.2, position=position_dodge(1)) + 
+  labs(x="", y="Log Cover %") + 
+  scale_x_discrete(labels=c("H", "M", "L")) + 
+  scale_colour_manual("Source", values = sourceColor, aesthetics = 'fill') + 
+  facet_grid(country~Label) + 
   theme_pubclean(base_size=14)
 
 
