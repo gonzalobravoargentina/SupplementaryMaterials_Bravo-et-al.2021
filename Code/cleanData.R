@@ -190,3 +190,71 @@ CM_FG_Human <- dfHuman %>% group_by(Name) %>%
 write_csv(CM_FG_Robot, file.path(outDir, "CM_FG_Robot.csv"))
 write_csv(CM_FG_Human, file.path(outDir, "CM_FG_Human.csv"))
 write_csv(CM_FG_Visual, file.path(outDir, "CM_FG_Visual.csv"))
+
+####################
+## Functional groups
+## Long formats
+## Robot
+## parse Name to extract country, site, and strata
+CM_FG_Robot$country <- str_sub(CM_FG_Robot$Name,1,2)
+CM_FG_Robot$site <- ifelse(CM_FG_Robot$country=='US', str_sub(CM_FG_Robot$Name,3,6),str_split(CM_FG_Robot$Name, "_", simplify = T)[,3] )
+CM_FG_Robot$strata <- ifelse(CM_FG_Robot$country=='US', str_split(CM_FG_Robot$Name, "_", simplify = T)[,3],
+                         str_split(CM_FG_Robot$Name, "_", simplify = T)[,4])
+CM_FG_Robot$source <- "robot"
+## recode strata for US. high is HT and low is MT. REorder to LT, MT, HT
+CM_FG_Robot$strata <- recode_factor(CM_FG_Robot$strata, low="MT", high="HT")
+CM_FG_Robot$strata <- factor(CM_FG_Robot$strata, levels = c("LT", "MT", "HT"))
+## clean US name
+CM_FG_Robot$Name <- gsub("_robot", "", CM_FG_Robot$Name)
+CM_FG_Robot$Name <- gsub(".jpg", "", CM_FG_Robot$Name)
+CM_FG_Robot$Name <- gsub(".JPG", "", CM_FG_Robot$Name)   ## US did it again!
+## re arrange the fields
+CM_FG_Robot <- CM_FG_Robot %>% relocate(Name, source, country, site, strata, everything())
+
+
+## HUMAN
+CM_FG_Human$country <- str_sub(CM_FG_Human$Name,1,2)
+CM_FG_Human$site <- ifelse(CM_FG_Human$country=='US', str_sub(CM_FG_Human$Name,3,6),str_split(CM_FG_Human$Name, "_", simplify = T)[,3] )
+CM_FG_Human$strata <- ifelse(CM_FG_Human$country=='US', str_split(CM_FG_Human$Name, "_", simplify = T)[,3],
+                             str_split(CM_FG_Human$Name, "_", simplify = T)[,4])
+CM_FG_Human$source <- "robot"
+## recode strata for US. high is HT and low is MT. REorder to LT, MT, HT
+CM_FG_Human$strata <- recode_factor(CM_FG_Human$strata, low="MT", high="HT")
+CM_FG_Human$strata <- factor(CM_FG_Human$strata, levels = c("LT", "MT", "HT"))
+## clean US name
+CM_FG_Human$Name <- gsub("_robot", "", CM_FG_Human$Name)
+CM_FG_Human$Name <- gsub(".jpg", "", CM_FG_Human$Name)
+CM_FG_Human$Name <- gsub(".JPG", "", CM_FG_Human$Name)   ## US did it again!
+## re arrange the fields
+CM_FG_Human <- CM_FG_Human %>% relocate(Name, source, country, site, strata, everything())
+
+
+## VISUAL
+CM_FG_Visual$country <- str_sub(CM_FG_Visual$Name,1,2)
+CM_FG_Visual$site <- ifelse(CM_FG_Visual$country=='US', str_sub(CM_FG_Visual$Name,3,6),str_split(CM_FG_Visual$Name, "_", simplify = T)[,3] )
+CM_FG_Visual$strata <- ifelse(CM_FG_Visual$country=='US', str_split(CM_FG_Visual$Name, "_", simplify = T)[,3],
+                             str_split(CM_FG_Visual$Name, "_", simplify = T)[,4])
+CM_FG_Visual$source <- "robot"
+## recode strata for US. high is HT and low is MT. REorder to LT, MT, HT
+CM_FG_Visual$strata <- recode_factor(CM_FG_Visual$strata, low="MT", high="HT")
+CM_FG_Visual$strata <- factor(CM_FG_Visual$strata, levels = c("LT", "MT", "HT"))
+## clean US name
+CM_FG_Visual$Name <- gsub("_robot", "", CM_FG_Visual$Name)
+CM_FG_Visual$Name <- gsub(".jpg", "", CM_FG_Visual$Name)
+CM_FG_Visual$Name <- gsub(".JPG", "", CM_FG_Visual$Name)   ## US did it again!
+## re arrange the fields
+CM_FG_Visual <- CM_FG_Visual %>% relocate(Name, source, country, site, strata, everything())
+
+
+## Combine FG tables
+## Human-Robot
+DF_FG_HumanRobot <- bind_rows(CM_FG_Human, CM_FG_Robot)
+DF_FG_HumanRobot <- DF_FG_HumanRobot %>%  pivot_longer(cols = 6:ncol(DF_FG_HumanRobot), names_to = 'Label', values_to = 'Cover')
+
+## Visual-Robot
+DF_FG_VisualRobot <- bind_rows(CM_FG_Visual, CM_FG_Robot)
+DF_FG_VisualRobot <- DF_FG_VisualRobot %>%  pivot_longer(cols = 6:ncol(DF_FG_VisualRobot), names_to = 'Label', values_to = 'Cover')
+
+write_csv(DF_FG_HumanRobot, file.path(outDir, "DF_FG_HumanRobot.csv"))
+write_csv(DF_FG_VisualRobot, file.path(outDir, "DF_FG_VisualRobot.csv"))
+
