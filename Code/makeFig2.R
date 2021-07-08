@@ -110,7 +110,7 @@ pp <- pp + geom_boxplot(position=position_dodge2(preserve = "single"), aes(fill=
 
 pp
 
-pp %>% ggexport(filename = "./Figures/Fig_2A_new.jpeg", width = 3000, height = 1615, res = 300, pointsize = 12)
+pp %>% ggexport(filename = "./Figures/Fig_2A_new.png", width = 3000, height = 1615, res = 300, pointsize = 12)
 
 
 
@@ -192,6 +192,6 @@ pp <- pp + geom_boxplot(position=position_dodge2(preserve="single"), aes(fill=so
   theme_pubclean(base_size=14)
 pp
 
-pp %>% ggexport(filename = "./Figures/Fig_2B_new.jpeg", width = 3000, height = 1615, res = 300, pointsize = 12)
+pp %>% ggexport(filename = "./Figures/Fig_2B_new.png", width = 3000, height = 1615, res = 300, pointsize = 12)
 
 
