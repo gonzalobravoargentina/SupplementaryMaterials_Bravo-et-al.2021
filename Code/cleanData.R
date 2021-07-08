@@ -161,8 +161,8 @@ write_csv(dfVisRob, file.path(outDir, "CM_VisualRobot.csv"))
 ## Long format data frame of bind community matrices
 ## labels are under "Label" and covers under "Cover"
 
-df_HumanRobot <- dfHumRob %>%  pivot_longer(cols = 6:nrow(dfHumRob), names_to = 'Label', values_to = 'Cover')
-df_VisualRobot <- dfVisRob %>%  pivot_longer(cols = 6:nrow(dfVisRob), names_to = 'Label', values_to = 'Cover')
+df_HumanRobot <- dfHumRob %>%  pivot_longer(cols = 6:ncol(dfHumRob), names_to = 'Label', values_to = 'Cover')
+df_VisualRobot <- dfVisRob %>%  pivot_longer(cols = 6:ncol(dfVisRob), names_to = 'Label', values_to = 'Cover')
 
 write_csv(df_HumanRobot, file.path(outDir, "DF_HumanRobot.csv"))
 write_csv(df_VisualRobot, file.path(outDir, "DF_VisualRobot.csv"))
