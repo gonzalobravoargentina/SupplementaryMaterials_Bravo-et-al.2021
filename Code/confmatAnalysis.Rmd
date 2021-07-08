@@ -1,0 +1,235 @@
+---
+title: "Confusion Matrix Analysis"
+author: 'E. Klein'
+date: "20210617"
+output: 
+  html_document:
+    toc:  TRUE
+    toc_float: TRUE
+    toc_depth: 5
+    theme: spacelab
+    highlight: kate
+    code_folding: hide
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, cache = F, echo = F, message = F, warning = F, tidy = F}
+# make this an external chunk that can be included in any file
+require(knitr)
+options(width = 100)
+opts_chunk$set(echo =T, message = F, error = F, warning = F, comment = NA,  
+               fig.align = 'left',  fig.width = 7.5, fig.height = 6,
+               tidy = F, cache.path = '.cache/', fig.path = 'fig/')
+               
+library(RColorBrewer)
+palette(brewer.pal(8, "Set2"))
+
+
+## load packages
+library(ggplot2)
+library(ggpubr)
+library(kableExtra)
+library(patchwork)
+
+library(caret)
+library(vegan)
+
+library(stringr)
+library(tidyr)
+library(dplyr)
+library(forcats)
+
+library(lme4)
+library(multcomp)
+
+library(formattable)
+
+# Suppress summarise info
+options(dplyr.summarise.inform = FALSE)
+
+
+## data sources
+dataDir <- "../Source_MBON_AR_CO_EC_US_Robot/New"
+humanDir <- "../Source_MBON_AR_CO_EC_US_Human/New"
+confmatDir <- "../confusion_matrix/"
+```
+
+last run `r Sys.time()`
+
+## Goals
+
+This document evaluates the performance of the CoralNet to classify rocky shores main groups from photoquadrats
+
+The analysis comprises:
+
+1.  Evaluate the performance of the CoralNet classifier.
+
+## Data
+
+The data is available at [CoralNet_MBON Github repository](https://github.com/gonzalobravoargentina/CoralNet_MBON). The codes for doing the analysis could be found the the Code directory of the same repo.
+
+## CoralNet Classifier performance
+
+### Labels
+
+Human labelled photoquadrats were used as a training input for the CoralNet classifier. A total of 360 pictures with 100 rectangular grid of points were annotated using the following labels:
+
+```{r}
+labelset <- read.csv("../Labelset/labelset_used.csv")
+
+kable(labelset) %>% kable_styling("striped")
+
+```
+
+Proportion of the labels in the set
+
+```{r}
+df <- read.csv(file.path(dataDir, "annotations.csv"))
+dfHuman <- df %>% filter(Comments=='random')
+dfRobot <- df %>% filter(Comments=='robot')
+dfSummary <- dfHuman %>% group_by(Label) %>% 
+  summarise(nPoints = n(), Countries = paste0(unique(country), collapse = ", ")) %>% 
+  mutate(Percent = round(100*nPoints/nrow(df),1)) %>% 
+  arrange(-nPoints)
+dfSummary <- left_join(dfSummary, labelset[,c('Name', 'Short.Code')], by=c('Label'='Short.Code')) %>% 
+  relocate(Name, Label, nPoints, Percent, Countries)
+
+formattable(dfSummary, list(Percent=color_bar("steelblue")))
+```
+
+As functional groups the labels and its representation in the data set:
+
+```{r}
+dfFuncGroup <- left_join(df, labelset[,c('Functional.Group', 'Short.Code')], by=c('Label'='Short.Code') )
+dfSummary <- dfFuncGroup %>% group_by(Functional.Group) %>% 
+  summarise(nPoints = n(), Countries = paste0(unique(country), collapse = ", ")) %>% 
+  mutate(Percent = round(100*nPoints/nrow(df),1)) %>% 
+  relocate(Functional.Group, nPoints, Percent, Countries) %>% 
+  arrange(-nPoints)
+
+formattable(dfSummary, list(Percent=color_bar("steelblue")), caption="Functional groups label set")
+```
+
+### Confusion Matrix
+
+CoralNet uses 7/8 of the data points to train the classification engine and 1/8 as a test set, to calculate the confusion matrix and the classifier accuracy.
+
+#### Full label set
+
+```{r}
+cm <- read.csv(file.path(confmatDir, "New model/confusion_matrix_full_0.csv"), header=FALSE)
+
+##get the Label. It is tricky as the first label has two parenthesis. The valid label is the last one in parenthesis
+tblLabels <- str_split( cm[,1], "\\(")
+tblLabels <- gsub("\\)", "", unlist(lapply(tblLabels, tail,1)))
+nLabels <- nrow(cm) 
+## modify here to select the first n lables
+#nLabels = 7
+
+tt <- as.table(as.matrix(cm[1:nLabels,2:(nLabels+1)]))
+rownames(tt) <- tblLabels[1:nLabels]
+colnames(tt) <- tblLabels[1:nLabels]
+
+cmm =confusionMatrix(tt)
+
+```
+
+The confusion matrix in numbers:
+
+```{r}
+tbl <- cmm$table
+tblDF <- as.data.frame.matrix(tbl)
+formattable(tblDF, list(area(row=TRUE)~color_tile("transparent", "steelblue")))
+
+```
+
+The confusion matrix is (in percentage of row totals):
+
+```{r}
+tbl <- round(100*prop.table(cmm$table, margin = 1),1)
+formattable(as.data.frame.matrix(tbl), list(area(row=TRUE)~color_tile("transparent", "coral")))
+
+```
+
+The general accuracy of the classifier is **`r round(100*cmm$overall[1],2)`%**.
+
+In %:
+
+```{r}
+round(100*cmm$overall, 2)
+```
+
+The classifier produces a set of five "guesses" for the labels and a confidence for each guess (analogous to a certainty percent) for each points, and assign to the point the label with highest confidence. The variability of the confidence of the first suggestion is a good indicator of the performance of the classifier for each of the labels.
+
+```{r}
+
+dfLabelSugg <- dfRobot %>% group_by(Label) %>% 
+  summarise(n = n(), min = min(Machine.confidence.1), mean = round(mean(Machine.confidence.1),1),
+            max = max(Machine.confidence.1), p75 = quantile(Machine.confidence.1, 0.75),
+            p95 = quantile(Machine.confidence.1, 0.95)
+  )
+dfLabelSugg <- left_join(dfLabelSugg, labelset[,c('Name', 'Short.Code')], by=c('Label'='Short.Code')) %>% 
+  arrange(-mean) %>% 
+  relocate(Name)
+
+
+formattable(dfLabelSugg, list(mean=color_bar("steelblue")))
+
+
+pp = ggplot(dfRobot, aes(x=fct_reorder(Label, Machine.confidence.1, max ), y=Machine.confidence.1, group=Label))
+pp + geom_violin(draw_quantiles = 0.5, fill="steelblue", alpha=0.5) +
+  labs(x="", y="Machine suggestion confidence (%)") + 
+  theme_pubclean()
+
+
+
+```
+
+#### Functional group labels
+
+Analysis of the performance of the classifier on **Functional Groups**
+
+```{r}
+cm <- read.csv(file.path(confmatDir, "New model/confusion_matrix_func_0.csv"), header=FALSE)
+
+
+##get the Label. It is tricky as the first label has two parenthesis. The valid label is the last one in parenthesis
+tblLabels <- str_split( cm[,1], "\\(")
+tblLabels <- gsub("\\)", "", unlist(lapply(tblLabels, tail,1)))
+nLabels <- nrow(cm)
+## modify here to select the first n lables
+#nLabels = 7
+
+tt <- as.table(as.matrix(cm[1:nLabels,2:(nLabels+1)]))
+rownames(tt) <- tblLabels[1:nLabels]
+colnames(tt) <- tblLabels[1:nLabels]
+
+cmm =confusionMatrix(tt)
+
+```
+
+The confusion matrix in numbers:
+
+```{r}
+tbl <- cmm$table
+formattable(as.data.frame.matrix(tbl), list(area(row=T)~color_tile("transparent", "steelblue")))
+
+```
+
+The confusion matrix is (in percentage of row totals):
+
+```{r}
+tbl <- round(100*prop.table(cmm$table, margin = 1),1)
+formattable(as.data.frame.matrix(tbl), list(area(row=TRUE)~color_tile("transparent", "coral")))
+
+```
+
+The general accuracy of the classifier is **`r round(100*cmm$overall[1],2)`%**.
+
+In %:
+
+```{r}
+round(100*cmm$overall, 2)
+```
+
