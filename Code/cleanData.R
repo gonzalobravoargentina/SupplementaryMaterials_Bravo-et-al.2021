@@ -2,7 +2,7 @@
 ### the data is in WIDE format, with labels at the end
 ### Save in a DataClean directory
 
-
+library(stringr)
 library(tidyr)
 library(readr)
 library(dplyr)
@@ -13,17 +13,19 @@ options(dplyr.summarise.inform = FALSE)
 
 ## data sources
 visualDir <- "Visual_quadrats"
-humanDir <- "Source_MBON_AR_CO_EC_US_Human"
-robotDir <- "Source_MBON_AR_CO_EC_US_Robot"
+humanDir <- "Source_MBON_AR_CO_EC_US_Human/New"
+robotDir <- "Source_MBON_AR_CO_EC_US_Robot/New"
 outDir <- "DataClean"
 
 
 ##########################
 ## ROBOT
 
-dfRobot <- read_csv(file.path(robotDir, "percent_covers_new.csv"), col_types = cols())
+dfRobot <- read_csv(file.path(robotDir, "percent_covers.csv"), col_types = cols())
+dfRobot <- dfRobot[,-1] ## remove the first column in the new format
+colnames(dfRobot)[1] <- "Name"
 dfRobot <- dfRobot %>% filter(`Annotation status`=='Unconfirmed') %>% 
-  dplyr::select(-matches("^Annotation")) %>% 
+  dplyr::select(-matches("^Annotation"), -Points) %>% 
   mutate(source='robot') 
 
 ## parse Name to extract country, site, and strata
@@ -39,6 +41,8 @@ dfRobot$strata <- factor(dfRobot$strata, levels = c("LT", "MT", "HT"))
 ## clean US name
 dfRobot$Name <- gsub("_robot", "", dfRobot$Name)
 dfRobot$Name <- gsub(".jpg", "", dfRobot$Name)
+dfRobot$Name <- gsub(".JPG", "", dfRobot$Name)   ## US did it again!
+
 
 ## re arrange the fields
 dfRobot <- dfRobot %>% relocate(Name, source, country, site, strata, everything())
@@ -58,9 +62,13 @@ write_csv(dfRobot, file.path(outDir, "CM_robot.csv"))
 ## HUMAN
 
 dfHuman <- read_csv(file.path(humanDir, "percent_covers.csv"), col_types = cols())
+dfHuman <- dfHuman[,-1] ## remove the first column in the new format
+colnames(dfHuman)[1] <- "Name"
+
 dfHuman <- dfHuman %>% filter(`Annotation status`=='Confirmed') %>% 
-  dplyr::select(-matches("^Annotation")) %>% 
+  dplyr::select(-matches("^Annotation"), -Points) %>% 
   mutate(source='human') 
+
 ## parse Name to extract country, site, and strata
 dfHuman$country <- str_sub(dfHuman$Name,1,2)
 dfHuman$site <- ifelse(dfHuman$country=='US', str_sub(dfHuman$Name,3,6),str_split(dfHuman$Name, "_", simplify = T)[,3] )
@@ -150,11 +158,11 @@ write_csv(dfVisRob, file.path(outDir, "CM_VisualRobot.csv"))
 
 
 ##############################
-## Long format data frame of binded community matrices
+## Long format data frame of bind community matrices
 ## labels are under "Label" and covers under "Cover"
 
-df_HumanRobot <- dfHumRob %>%  pivot_longer(cols = 6:25, names_to = 'Label', values_to = 'Cover')
-df_VisualRobot <- dfVisRob %>%  pivot_longer(cols = 6:18, names_to = 'Label', values_to = 'Cover')
+df_HumanRobot <- dfHumRob %>%  pivot_longer(cols = 6:nrow(dfHumRob), names_to = 'Label', values_to = 'Cover')
+df_VisualRobot <- dfVisRob %>%  pivot_longer(cols = 6:nrow(dfVisRob), names_to = 'Label', values_to = 'Cover')
 
 write_csv(df_HumanRobot, file.path(outDir, "DF_HumanRobot.csv"))
 write_csv(df_VisualRobot, file.path(outDir, "DF_VisualRobot.csv"))
