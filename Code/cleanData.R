@@ -217,7 +217,7 @@ CM_FG_Human$country <- str_sub(CM_FG_Human$Name,1,2)
 CM_FG_Human$site <- ifelse(CM_FG_Human$country=='US', str_sub(CM_FG_Human$Name,3,6),str_split(CM_FG_Human$Name, "_", simplify = T)[,3] )
 CM_FG_Human$strata <- ifelse(CM_FG_Human$country=='US', str_split(CM_FG_Human$Name, "_", simplify = T)[,3],
                              str_split(CM_FG_Human$Name, "_", simplify = T)[,4])
-CM_FG_Human$source <- "robot"
+CM_FG_Human$source <- "human"
 ## recode strata for US. high is HT and low is MT. REorder to LT, MT, HT
 CM_FG_Human$strata <- recode_factor(CM_FG_Human$strata, low="MT", high="HT")
 CM_FG_Human$strata <- factor(CM_FG_Human$strata, levels = c("LT", "MT", "HT"))
@@ -234,7 +234,7 @@ CM_FG_Visual$country <- str_sub(CM_FG_Visual$Name,1,2)
 CM_FG_Visual$site <- ifelse(CM_FG_Visual$country=='US', str_sub(CM_FG_Visual$Name,3,6),str_split(CM_FG_Visual$Name, "_", simplify = T)[,3] )
 CM_FG_Visual$strata <- ifelse(CM_FG_Visual$country=='US', str_split(CM_FG_Visual$Name, "_", simplify = T)[,3],
                              str_split(CM_FG_Visual$Name, "_", simplify = T)[,4])
-CM_FG_Visual$source <- "robot"
+CM_FG_Visual$source <- "visual"
 ## recode strata for US. high is HT and low is MT. REorder to LT, MT, HT
 CM_FG_Visual$strata <- recode_factor(CM_FG_Visual$strata, low="MT", high="HT")
 CM_FG_Visual$strata <- factor(CM_FG_Visual$strata, levels = c("LT", "MT", "HT"))
