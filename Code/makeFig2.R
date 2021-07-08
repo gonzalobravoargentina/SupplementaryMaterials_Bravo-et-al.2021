@@ -4,9 +4,9 @@ library(readr)
 library(ggplot2)
 library(ggpubr)
 library(dplyr)
-library(ggpubr)
 
-selectedLabels <- c("CRB", "MOB", "SC", "MAF", "MAEN", "MAA", "MAS")  ## remove MAEC as it is only present in US
+
+selectedLabels <- c("CRB", "MOB", "SC", "MAF", "MAEN", "MAA", "MAS", "MAEC")  
 sourceColor <- c(visual="#f7fcb9", human="#addd8e", robot="#31a354")
 
 
@@ -15,6 +15,9 @@ sourceColor <- c(visual="#f7fcb9", human="#addd8e", robot="#31a354")
 ##################
 DF_HR <- read_csv("./DataClean/DF_HumanRobot.csv", col_types = cols())
 DF_HR$strata <- factor(DF_HR$strata, levels = c("LT", "MT", "HT"))
+DF_HR$source <- factor(DF_HR$source, levels = c("human", "visual", "robot"))
+DF_HR$country <- factor(DF_HR$country, levels = c("AR", "CO", "EC", "US"), 
+                        labels = c("ARGENTINA", "COLOMBIA", "ECUADOR", "USA"))
 
 pp <- ggplot(DF_HR, aes(Label, Cover))
 pp + geom_boxplot(position=position_dodge(1), aes(fill=source), outlier.size = 0.3) +
@@ -97,12 +100,17 @@ pp + geom_bar(stat="identity", position=position_dodge(1), aes(fill=source)) +
 ## THIS IS A REPLICA OF FIGURE 2, but with BOX PLOTS
 ## Cover ~strata faceted by country and label. mean and sd calculated using log of Cover+1
 pp <- ggplot(DF_HR %>% filter(Label %in% selectedLabels), aes(strata, Cover, fill=source))
-pp + geom_boxplot(position=position_dodge(0.85), aes(fill=source), outlier.size = 0.3) +
-  labs(x="Stratum", y="Log Cover %") + 
+pp <- pp + geom_boxplot(position=position_dodge2(preserve = "single"), aes(fill=source), outlier.size = 0.3, notch = FALSE) +
+  labs(x="Stratum", y="Cover %") + 
+  scale_y_log10() + 
   scale_x_discrete(breaks=c("HT", "MT", "LT"), labels=c("H", "M", "L")) + 
   scale_colour_manual("Source", values = sourceColor, aesthetics = 'fill') + 
   facet_grid(country~Label) + 
   theme_pubclean(base_size=14)
+
+pp
+
+pp %>% ggexport(filename = "./Figures/Fig_2A_new.jpeg", width = 3000, height = 1615, res = 300, pointsize = 12)
 
 
 
@@ -116,6 +124,9 @@ pp + geom_boxplot(position=position_dodge(0.85), aes(fill=source), outlier.size 
 
 DF_VR <- read_csv("./DataClean/DF_VisualRobot.csv", col_types = cols())
 DF_VR$strata <- factor(DF_VR$strata, levels = c("LT", "MT", "HT"))
+DF_VR$source <- factor(DF_VR$source, levels = c("human", "visual", "robot"))
+DF_VR$country <- factor(DF_VR$country, levels = c("AR", "CO", "EC", "US"), 
+                        labels = c("ARGENTINA", "COLOMBIA", "ECUADOR", "USA"))
 
 ## remove US from Visual
 pp <- ggplot(DF_VR %>% filter(country != "US", Label %in% selectedLabels), aes(strata, Cover))
@@ -166,5 +177,21 @@ pp + geom_bar(stat="identity", position=position_dodge(1), aes(fill=source)) +
   scale_colour_manual("Source", values = sourceColor, aesthetics = 'fill') + 
   facet_grid(country~Label) + 
   theme_pubclean(base_size=14)
+
+
+
+## THIS IS A REPLICA OF FIGURE 2, but with BOX PLOTS
+## Cover ~strata faceted by country and label. mean and sd calculated using log of Cover+1
+pp <- ggplot(DF_VR %>% filter(Label %in% selectedLabels, country != "USA"), aes(strata, Cover, fill=source))
+pp <- pp + geom_boxplot(position=position_dodge2(preserve="single"), aes(fill=source), outlier.size = 0.3, notch = FALSE, width=0.7) +
+  labs(x="Stratum", y="Cover %") + 
+  scale_y_log10() + 
+  scale_x_discrete(breaks=c("HT", "MT", "LT"), labels=c("H", "M", "L")) + 
+  scale_colour_manual("Source", values = sourceColor, aesthetics = 'fill') + 
+  facet_grid(country~Label) + 
+  theme_pubclean(base_size=14)
+pp
+
+pp %>% ggexport(filename = "./Figures/Fig_2B_new.jpeg", width = 3000, height = 1615, res = 300, pointsize = 12)
 
 
