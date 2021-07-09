@@ -27,6 +27,7 @@ palette(brewer.pal(8, "Set2"))
 
 
 ## load packages
+library(readr)
 library(ggplot2)
 library(ggpubr)
 library(kableExtra)
@@ -58,7 +59,9 @@ cleandataDir <- "../DataClean"
 
 last run `r Sys.time()`
 
-## Goals
+
+
+# Goals
 
 This document evaluates the performance of the CoralNet to classify rocky shores main groups from photoquadrats
 
@@ -66,12 +69,12 @@ The analysis comprises:
 
 2.  Compare the classification results of the visually identified quadrats with automatic classification of photoquadrats
 
-## Data
+# Data
 
 The data is available at [CoralNet_MBON Github repository](https://github.com/gonzalobravoargentina/CoralNet_MBON). The codes for doing the analysis could be found the the Code directory of the same repo.
 
 
-## Labels
+# Labels
 
 Human labelled photoquadrats were used as a training input for the CoralNet classifier. A total of 360 pictures with 100 rectagular grid of points were annotated using the following labels:
 
@@ -112,7 +115,7 @@ formattable(dfSummary, list(Percent=color_bar("steelblue")), caption="Functional
 ```
 
 
-
+# Full Community
 
 ## Photoquadrats vs Robot
 
@@ -194,7 +197,7 @@ Plot the BC distances by strata and country:
 strataColor = c(LOWTIDE="#f7fcb9", MIDTIDE="#addd8e", HIGHTIDE="#31a354")
 
 pp_ARG <- ggplot(BC_RH %>% filter(Country=="AR"), aes(Strata, BC))
-pp_ARG <- pp_ARG + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", outlier.size = 0.3) + 
+pp_ARG <- pp_ARG + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", outlier.size = 0.3, lwd=0.2) + 
   ylim(0,0.8) +
   scale_color_manual(values = strataColor, aesthetics = 'fill') + 
   labs(title="ARGENTINA", x="", y="Bray-Curtis distance") +
@@ -203,7 +206,7 @@ pp_ARG <- pp_ARG + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", out
   theme(legend.position = 'none')
 
 pp_COL <- ggplot(BC_RH %>% filter(Country=="CO"), aes(Strata, BC))
-pp_COL <- pp_COL + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", outlier.size = 0.3) + 
+pp_COL <- pp_COL + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", outlier.size = 0.3, lwd=0.2) + 
   ylim(0,0.8) + 
   scale_color_manual(values = strataColor, aesthetics = 'fill') + 
   labs(title="COLOMBIA", x="", y=" ") +
@@ -212,7 +215,7 @@ pp_COL <- pp_COL + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", out
   theme(legend.position = 'none')
 
 pp_ECU <- ggplot(BC_RH %>% filter(Country=="EC"), aes(Strata, BC))
-pp_ECU <- pp_ECU + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", outlier.size = 0.3) + 
+pp_ECU <- pp_ECU + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", outlier.size = 0.3, lwd=0.2) + 
   ylim(0,0.8) + 
   scale_color_manual(values = strataColor, aesthetics = 'fill') + 
   labs(title="ECUADOR", x="", y="Bray-Curtis distance") +
@@ -221,7 +224,7 @@ pp_ECU <- pp_ECU + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", out
   theme(legend.position = 'none')
 
 pp_USA <- ggplot(BC_RH %>% filter(Country=="US"), aes(Strata, BC))
-pp_USA <- pp_USA + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", outlier.size = 0.3) + 
+pp_USA <- pp_USA + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", outlier.size = 0.3, lwd=0.2) + 
   ylim(0,0.8) + 
   scale_color_manual(values = strataColor, aesthetics = 'fill') + 
   labs(title="USA", x="", y=" ") +
@@ -242,6 +245,19 @@ pp + geom_boxplot(position=position_dodge2(preserve = "single"), aes(fill=Strata
   theme_pubclean()
 ```
 
+
+Let's try another version
+
+```{r}
+pp <- ggplot(BC_RH, aes(Country, BC, fill=Strata))
+pp + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", position=position_dodge2(preserve="single") , outlier.size = 0.3, lwd=0.2) + 
+  scale_color_manual(values = strataColor, aesthetics = 'fill') + 
+  ylim(0, 0.3) + 
+  facet_grid(~Strata) + 
+  theme_pubclean() + 
+  theme(legend.position = 'none')
+
+```
 
 Apply a GMM nested model 
 
@@ -278,7 +294,7 @@ BClower <- round(BCmean - BCmargin, 3)
 
 ```
 
-AS demonstrated, the classifier is insensitive to the variability produced by Country and Strata, being equally efficient no matter the source of the quadrat. **In general, the difference between the classifier and the visual estimate of the community cover of a mean quadrat is `r BCmean` with a 95% confidence interval of [`r BClower` - `r BCupper`]**
+As demonstrated, the classifier is insensitive to the variability produced by Country and Strata, being equally efficient no matter the source of the quadrat. **In general, the difference between the classifier and the visual estimate of the community cover of a mean quadrat is `r BCmean` with a 95% confidence interval of [`r BClower` - `r BCupper`]**
 
 
 
@@ -299,22 +315,18 @@ Method:
 1.  bind visual cover estimates from all sites, except USA, as the USA photoquadrats does not coincide with the quadrats used for visual estimates
 
 ```{r}
-## bind visual data
+## it may be repeated but letś do it again in case we want to do a separate analysis
+## get Visual data
+CM_Visual <- read_csv(file.path(cleandataDir, "CM_visual.csv"), col_types = cols())
+CM_Robot <- read_csv(file.path(cleandataDir, "CM_robot.csv"), col_types = cols())
 
-CM_Visual <- bind_rows(read.csv("../Visual_quadrats/argentina_visual.csv"),
-                     read.csv("../Visual_quadrats/colombia_visual.csv"),
-                     read.csv("../Visual_quadrats/galapagos_visual.csv"))
+##match the robot labels to visual labels
+labelsVisual <- colnames(CM_Visual)[6:ncol(CM_Visual)]
+CM_Robot <- CM_Robot %>% dplyr::select(Name:strata,  contains(labelsVisual))
 
-CM_VisualLong <- CM_Visual %>% pivot_longer(cols = 21:33, names_to = 'Label', values_to = 'Count' )
-
-
-CM_Robot <- CM_Robot %>% pivot_wider(id_cols = "Name", names_from = "Label", values_from = "n")   
-
-## match the Names with visual (dropping USA quadrats)
-visualQD <- unique(CM_Visual$Name)
-CM_Robot = CM_Robot[CM_Robot$Name %in% visualQD,]
-
-
+## replace NA by zero
+CM_Visual[is.na(CM_Visual)] <- 0
+CM_Robot[is.na(CM_Robot)] <- 0
 ```
 
 #### Full Label Set
@@ -323,13 +335,15 @@ We will use the only the labels produced by the classifier as the label set. We 
 
 ```{r}
 ## calculate BC index
-BC <- data.frame(Country=character(), Site=character(), Strata=character(), BC=numeric())
+nLabels <- ncol(CM_Visual)
+
+BC_VR <- data.frame(Country=character(), Site=character(), Strata=character(), BC=numeric())
 for (i in 1:nrow(CM_Visual)){
   robotIndex <- which(CM_Robot$Name==CM_Visual$Name[i])
   if (length(robotIndex) > 0 ){
-    CM_one <- bind_rows(CM_Visual[i,21:33], CM_Robot[robotIndex,2:13])
+    CM_one <- bind_rows(CM_Visual[i,6:nLabels], CM_Robot[robotIndex,6:nLabels])
     CM_one[is.na(CM_one)] <- 0
-    BC <- bind_rows(BC, 
+    BC_VR <- bind_rows(BC_VR, 
                     data.frame(Country = CM_Visual$country[i],
                                Site = CM_Visual$site[i],
                                Strata = CM_Visual$strata[i],
@@ -338,30 +352,40 @@ for (i in 1:nrow(CM_Visual)){
     print(paste0("NOT FOUND in Robot: ", CM_Visual$Name[i]))
   }
 }
-BC$Strata <- factor(BC$Strata, levels = c("LOWTIDE", "MIDTIDE", "HIGHTIDE"))
+BC_VR$Site <- recode_factor(BC_VR$Site, PC="Punta Cuevas", PE="Punta Este", PL="Punta Lobos", 
+                            LM="La Mancora", LV="La Ventana", PV="Playa Verde", 
+                            CD="Charles Darwin Station", RA="Ratonera", TO="Tortuga Bay", 
+                            MAMH="MAMH", MAPH="MAPH", MECH="MECH", MEGS="MEGS")
+BC_VR$Strata <- factor(BC_VR$Strata, levels = c("LT", "MT", "HT"), labels = c("LOWTIDE", "MIDTIDE", "HIGHTIDE"))
+BC_VR$Country <- factor(BC_VR$Country, levels = c("AR", "CO", "EC"), labels = c("ARGENTINA", "COLOMBIA", "ECUADOR"))
 
 ```
 
+
+
 ```{r, fig.height=12}
-pp_ARG <- ggplot(BC %>% filter(Country=="ARGENTINA"), aes(Strata, BC))
-pp_ARG <- pp_ARG + geom_boxplot(width=0.5, aes(fill=Strata), colour="grey50") + 
+pp_ARG <- ggplot(BC_VR %>% filter(Country=="ARGENTINA"), aes(Strata, BC))
+pp_ARG <- pp_ARG + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", outlier.size = 0.3, lwd=0.2) + 
   ylim(0,0.8) + 
+  scale_color_manual(values = strataColor, aesthetics = 'fill') + 
   labs(title="ARGENTINA", x="", y=" ") +
   facet_grid(~Site) + 
   theme_pubclean() + 
   theme(legend.position = 'none')
 
-pp_COL <- ggplot(BC %>% filter(Country=="COLOMBIA"), aes(Strata, BC))
-pp_COL <- pp_COL + geom_boxplot(width=0.5, aes(fill=Strata), colour="grey50") + 
+pp_COL <- ggplot(BC_VR %>% filter(Country=="COLOMBIA"), aes(Strata, BC))
+pp_COL <- pp_COL + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", outlier.size = 0.3, lwd=0.2) + 
   ylim(0,0.8) + 
+  scale_color_manual(values = strataColor, aesthetics = 'fill') + 
   labs(title="COLOMBIA", x="", y="Bray-Curtis distance") +
   facet_grid(~Site) + 
   theme_pubclean() + 
   theme(legend.position = 'none')
 
-pp_ECU <- ggplot(BC %>% filter(Country=="ECUADOR"), aes(Strata, BC))
-pp_ECU <- pp_ECU + geom_boxplot(width=0.5, aes(fill=Strata), colour="grey50") + 
+pp_ECU <- ggplot(BC_VR %>% filter(Country=="ECUADOR"), aes(Strata, BC))
+pp_ECU <- pp_ECU + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", outlier.size = 0.3, lwd=0.2) + 
   ylim(0,0.8) + 
+  scale_color_manual(values = strataColor, aesthetics = 'fill') + 
   labs(title="ECUADOR", x="", y=" ") +
   facet_grid(~Site) + 
   theme_pubclean() + 
@@ -376,78 +400,84 @@ pp_ARG / pp_COL / pp_ECU
 
 Let's try to reduce the number of labels to the most representative ones. It makes sense as the infrequent labels have poorly accuracy in the classifier as the number of training points is very low.
 
-Try with the labels that are present in 85% of the points in the Visual file:
+Try with the labels that are present in 99.5% of the points in the Visual file:
 
 This is the number of points and accumulated % per label:
 
 ```{r}
-tt = table(dfRobot$Label)
-sort(tt, decreasing = T)
+DF_VisualRobot <- read_csv(file.path(cleandataDir, "DF_VisualRobot.csv"), col_types = cols())
+
+labelTable <- DF_VisualRobot %>% group_by(Label) %>% 
+  summarise(VISUAL = sum(Cover[source=='visual']), ROBOT = sum(Cover[source=='robot'])) %>% 
+  arrange(-VISUAL) %>% 
+  mutate(VISUALcum = round(100*cumsum(VISUAL)/sum(VISUAL),2), 
+         ROBOTcum = round(100*cumsum(ROBOT)/sum(ROBOT),2))
+
+kable(labelTable) %>% kable_styling("striped")
+labels995 <- labelTable$Label[labelTable$VISUALcum <= 99.6]
 ```
 
-and the accumulated %. Let's pick the labels that accumulate up to 95% of the point
+The labels that accumulate up to 99.6% of the points are:
 
 ```{r}
-labelAcum <- CM_VisualLong %>% group_by(Label) %>% 
-  summarise(n=sum(Count, na.rm=T)) %>% 
-  arrange(-n) %>% 
-  mutate(nPercent = round(100*n/sum(n), 2), pAcum = cumsum(nPercent))
-
-kable(labelAcum, caption = "% of points per label, accumulated") %>% 
-  kable_styling("striped", full_width = FALSE)
-
-labels95 <- labelAcum$Label[labelAcum$pAcum<=96]
-
-labels95
-
+cat(labels995)
 ```
+
 
 and repeat the BC analysis, including only **`r paste0(labels95, collapse=",")`**...
 
 ```{r}
 ## Filter robot labels using selected visual labels
-CM_Robot5 <- CM_Robot %>% dplyr::select(Name, contains(labels95))
-CM_Visual5 <- CM_Visual %>% dplyr::select(Name, country, site, strata, contains(labels95))
+CM_Robot995 <- CM_Robot %>% dplyr::select(Name:strata, contains(labels995))
+CM_Visual995 <- CM_Visual %>% dplyr::select(Name:strata, contains(labels995))
 
 ## calculate BC index
-BC <- data.frame(Country=character(), Site=character(), Strata=character(), BC=numeric())
-for (i in 1:nrow(CM_Visual)){
-  robotIndex <- which(CM_Robot5$Name==CM_Visual$Name[i])
+BC_VR995 <- data.frame(Country=character(), Site=character(), Strata=character(), BC=numeric())
+for (i in 1:nrow(CM_Visual995)){
+  robotIndex <- which(CM_Robot995$Name==CM_Visual995$Name[i])
   if (length(robotIndex) > 0 ){
-    CM_one <- bind_rows(CM_Visual5[i,5:ncol(CM_Visual5)], CM_Robot5[robotIndex,2:ncol(CM_Robot5)])
+    CM_one <- bind_rows(CM_Visual995[i,6:ncol(CM_Visual995)], CM_Robot995[robotIndex,6:ncol(CM_Robot995)])
     CM_one[is.na(CM_one)] <- 0
-    BC <- bind_rows(BC, 
-                    data.frame(Country = CM_Visual$country[i],
-                               Site = CM_Visual$site[i],
-                               Strata = CM_Visual$strata[i],
+    BC_VR995 <- bind_rows(BC_VR995, 
+                    data.frame(Country = CM_Visual995$country[i],
+                               Site = CM_Visual995$site[i],
+                               Strata = CM_Visual995$strata[i],
                                BC = as.numeric(vegdist(CM_one, na.rm = T))))
   }else {
     print(paste0("NOT FOUND in Robot: ", CM_Visual$Name[i]))
   }
 }
-BC$Strata <- factor(BC$Strata, levels = c("LOWTIDE", "MIDTIDE", "HIGHTIDE"))
+BC_VR995$Site <- recode_factor(BC_VR995$Site, PC="Punta Cuevas", PE="Punta Este", PL="Punta Lobos", 
+                            LM="La Mancora", LV="La Ventana", PV="Playa Verde", 
+                            CD="Charles Darwin Station", RA="Ratonera", TO="Tortuga Bay", 
+                            MAMH="MAMH", MAPH="MAPH", MECH="MECH", MEGS="MEGS")
+BC_VR995$Strata <- factor(BC_VR995$Strata, levels = c("LT", "MT", "HT"), labels = c("LOWTIDE", "MIDTIDE", "HIGHTIDE"))
+BC_VR995$Country <- factor(BC_VR995$Country, levels = c("AR", "CO", "EC"), labels = c("ARGENTINA", "COLOMBIA", "ECUADOR"))
 ```
 
 ```{r, fig.height=12}
-pp_ARG <- ggplot(BC %>% filter(Country=="ARGENTINA"), aes(Strata, BC))
-pp_ARG <- pp_ARG + geom_boxplot(width=0.5, aes(fill=Strata), colour="grey50") + 
+pp_ARG <- ggplot(BC_VR995 %>% filter(Country=="ARGENTINA"), aes(Strata, BC))
+pp_ARG <- pp_ARG + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", outlier.size = 0.3, lwd=0.2) + 
   ylim(0,0.8) + 
+  scale_color_manual(values = strataColor, aesthetics = 'fill') + 
   labs(title="ARGENTINA", x="", y=" ") +
   facet_grid(~Site) + 
   theme_pubclean() + 
   theme(legend.position = 'none')
 
-pp_COL <- ggplot(BC %>% filter(Country=="COLOMBIA"), aes(Strata, BC))
-pp_COL <- pp_COL + geom_boxplot(width=0.5, aes(fill=Strata), colour="grey50") + 
+pp_COL <- ggplot(BC_VR995 %>% filter(Country=="COLOMBIA"), aes(Strata, BC))
+pp_COL <- pp_COL + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", outlier.size = 0.3, lwd=0.2) + 
   ylim(0,0.8) + 
+  scale_color_manual(values = strataColor, aesthetics = 'fill') + 
   labs(title="COLOMBIA", x="", y="Bray-Curtis distance") +
   facet_grid(~Site) + 
   theme_pubclean() + 
   theme(legend.position = 'none')
 
-pp_ECU <- ggplot(BC %>% filter(Country=="ECUADOR"), aes(Strata, BC))
-pp_ECU <- pp_ECU + geom_boxplot(width=0.5, aes(fill=Strata), colour="grey50") + 
+pp_ECU <- ggplot(BC_VR995 %>% filter(Country=="ECUADOR"), aes(Strata, BC))
+pp_ECU <- pp_ECU + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", outlier.size = 0.3, lwd=0.2) + 
   ylim(0,0.8) + 
+  scale_color_manual(values = strataColor, aesthetics = 'fill') + 
   labs(title="ECUADOR", x="", y=" ") +
   facet_grid(~Site) + 
   theme_pubclean() + 
@@ -458,10 +488,26 @@ pp_ARG / pp_COL / pp_ECU
 
 ```
 
+
+Let's try another version
+
+```{r}
+pp <- ggplot(BC_VR995, aes(Country, BC, fill=Strata))
+pp + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", position=position_dodge2(preserve="single") , outlier.size = 0.3, lwd=0.2) + 
+  scale_color_manual(values = strataColor, aesthetics = 'fill') + 
+  ylim(0, 0.3) + 
+  facet_grid(~Strata) + 
+  theme_pubclean() + 
+  theme(legend.position = 'none')
+
+```
+
+
+
 Description of the BC values
 
 ```{r}
-BCsummary <- BC %>% group_by(Country, Site, Strata) %>% 
+BCsummary <- BC_VR995 %>% group_by(Country, Site, Strata) %>% 
   summarize(n = n(), BCmean = mean(BC), BCsd = sd(BC), BCmin = min(BC), BCmax = max(BC),
             BCq25 = quantile(BC, 0.25), BCmedian = median(BC), BCq75 = quantile(BC, 0.75))
 
@@ -474,8 +520,8 @@ Let's create additional variables: Quadrat and Site2 which are the sites coded a
 
 ```{r}
 
-BC$Quadrat <- rep(1:10, 27)
-BC$Site2 <- rep(c(rep("A",30), rep("B", 30), rep("C", 30)), 3)
+BC_VR995$Quadrat <- rep(1:10, 27)
+BC_VR995$Site2 <- rep(c(rep("A",30), rep("B", 30), rep("C", 30)), 3)
 ```
 
 and fit a binomial nested model with BC as dependent variables and Country, Site and Strata as fixed factors and Quadrat as random factor.
@@ -487,16 +533,12 @@ library(multcomp)
 par(mar=c(7,7,7,7))
 par(oma=c(1,1,1,1))
 
-model = glmer(BC ~ Country + Site2 + Strata + (Country/Site2/Strata) + (1|Quadrat), data=BC, family=binomial)
+model = glmer(BC ~ Country + Strata + Country*Strata + (1|Site/Quadrat), data=BC_VR995, family=binomial)
 summary(model)
 
 testStrata = glht(model, linfct = mcp("Strata" = "Tukey"))
 summary(testStrata)
 plot(confint(testStrata), cex=0.5)
-
-testSite2 = glht(model, linfct = mcp("Site2" = "Tukey"))
-summary(testSite2)
-plot(confint(testSite2))
 
 testCountry = glht(model, linfct = mcp("Country" = "Tukey"))
 summary(testCountry)
@@ -504,9 +546,9 @@ plot(confint(testCountry))
 ```
 
 ```{r}
-BCmean <- round(mean(BC$BC),3)
-BCn <- nrow(BC)
-BCsd <- sd(BC$BC)
+BCmean <- round(mean(BC_VR995$BC),3)
+BCn <- nrow(BC_VR995)
+BCsd <- sd(BC_VR995$BC)
 BCmargin <- qt(0.975,df=BCn-1)*BCsd/sqrt(BCn)
 BCupper <- round(BCmean + BCmargin, 3)
 BClower <- round(BCmean - BCmargin, 3) 
@@ -515,11 +557,15 @@ BClower <- round(BCmean - BCmargin, 3)
 
 AS demonstrated, the classifier is insensitive to the variability produced by Country, Site and Strata, being equally efficient no matter the source of the quadrat. **In general, the difference between the classifier and the visual estimate of the community cover of a mean quadrat is `r BCmean` with a 95% confidence interval of [`r BClower` - `r BCupper`]**
 
-## Similarity with visual: Functional groups
 
-TODO
 
-Group the labels into functional groups:
+
+
+
+
+
+# Functional groups
+
 
 According to Gonza's code the correspondence of `labels` to `funcGroup` is:
 
@@ -530,120 +576,290 @@ According to Gonza's code the correspondence of `labels` to `funcGroup` is:
 | `INVERTEBRATES`  | CRB,MOB,CNTR,WPOT,MOG,CNCA,BRY,CR,MOCH    |
 
 
-```{r}
-## Re-classify labels into functional groups labels
 
-CM_Robot_FC <- CM_Robot %>% group_by(Name) %>% 
-  summarise(ALGAE = sum(MAF,MAEN,MAA,MAS,MALCB,MAEC, na.rm=T),
-            SUBSTRATE = SC,
-            INVERTEBRATES = sum(CRB,MOB,WPOT,MOG, na.rm=T))
-
-CM_Visual_FC <- CM_Visual %>% group_by(Name) %>% 
-  summarise(ALGAE = sum(MAF,MAEN,MAA,MAG,MAS,MALCB, na.rm=T),
-            SUBSTRATE = SC,
-            INVERTEBRATES = sum(CRB,MOB,CNTR,WPOT,MOG,CNCA, na.rm = T))
-
-```
-
-
-
-
-## Figure 2: new proposal
-
-I propose to plot the cover estimates from field (visual) along with estimated of the robot for the main labels only, the same included in the GMM analysis.
-
-With labels that represent up to 95% of all records:
+### Human vs Robot
 
 ```{r}
-## make long DFs
-CM_Visual5_long <- CM_Visual5 %>% pivot_longer(cols = 5:9, names_to = "label", values_to = 'Cover')
-CM_Visual5_long$source <- "visual"
+DF_FG_HumanRobot <- read_csv(file.path(cleandataDir, "DF_FG_HumanRobot.csv"), col_types = cols())
 
-CM_Robot5_long <- CM_Robot5 %>% pivot_longer(cols = 2:6, names_to = "label", values_to = 'Cover')
-CM_Robot5_long$source <- "robot"
+CM_FG_Human <- DF_FG_HumanRobot %>% filter(source=='human') %>% 
+  pivot_wider(names_from = 'Label', values_from = 'Cover')
 
-CM_Human5_long <- CM_Human95 %>% pivot_longer(cols = 2:7, names_to = "label", values_to = 'Cover')
-CM_Human5_long$source <- "human"
-
-CM_compare <- bind_rows(CM_Visual5_long, CM_Robot5_long, CM_Human5_long)
-
-CM_compare$countryCode <- str_sub(CM_compare$Name,1,2)
-CM_compare$siteCode <- ifelse(CM_compare$countryCode=='US', str_sub(CM_compare$Name,3,6),str_split(CM_compare$Name, "_", simplify = T)[,3] )
-CM_compare$strataCode <- ifelse(CM_compare$countryCode=='US', str_split(CM_compare$Name, "_", simplify = T)[,3],
-                            str_split(CM_compare$Name, "_", simplify = T)[,4])
-CM_compare$strataCode <- recode_factor(CM_compare$strataCode, low="LT", mid="MT", high="HT")
-
-
-# 
-# 
-# CM_compare$countryCode <- str_split(CM_compare$Name, "_", simplify = T)[,1]
-# CM_compare$siteCode <- str_split(CM_compare$Name, "_", simplify = T)[,3]
-# CM_compare$strataCode <- str_split(CM_compare$Name, "_", simplify = T)[,4]
-# CM_compare$strataCode <- factor(CM_compare$strataCode, levels = c("LT", "MT", "HT"))
-
-```
-
-```{r fig.width=12, fig.height=10}
-
-sourceColor <- c(visual="#fee8c8", human="#fdbb84", robot="#e34a33")
-
-pp <- ggplot(CM_compare %>% filter(source != "human"), aes(label, Cover))
-pp + geom_boxplot(position=position_dodge(1), aes(fill=source), outlier.size = 0.3) +
-  labs(x="", y="Cover %") + 
-  scale_colour_manual("Source", values = sourceColor, aesthetics = 'fill') + 
-  facet_grid(countryCode~strataCode) + 
-  theme_pubclean(base_size=14)
-
-
-pp <- ggplot(CM_compare %>% filter(source != "visual"), aes(label, Cover))
-pp + geom_boxplot(position=position_dodge(1), aes(fill=source), outlier.size = 0.3) +
-  labs(x="", y="Cover %") + 
-  scale_colour_manual("Source", values = sourceColor, aesthetics = 'fill') + 
-  facet_grid(countryCode~strataCode) + 
-  theme_pubclean(base_size=14)
-
+CM_FG_Robot <- DF_FG_HumanRobot %>% filter(source=='robot') %>% 
+  pivot_wider(names_from = 'Label', values_from = 'Cover')
 
 ```
 
 
-With Functional Groups
+Calculate Bray-Curtis
 
 ```{r}
-CM_Visual_FC_long <- CM_Visual_FC %>% pivot_longer(cols = 2:4, names_to = "label", values_to = "Cover")
-CM_Visual_FC_long$source <- "visual"
+## calculate BC index
+nLabels <- ncol(CM_FG_Human)
 
-CM_Robot_FC_long <- CM_Robot_FC %>% pivot_longer(cols = 2:4, names_to = "label", values_to = "Cover")
-CM_Robot_FC_long$source <- "robot"
-
-CM_compare_FC <- bind_rows(CM_Visual_FC_long, CM_Robot_FC_long)
-
-
-
-
-CM_compare_FC$countryCode <- str_split(CM_compare_FC$Name, "_", simplify = T)[,1]
-CM_compare_FC$siteCode <- str_split(CM_compare_FC$Name, "_", simplify = T)[,3]
-CM_compare_FC$strataCode <- str_split(CM_compare_FC$Name, "_", simplify = T)[,4]
-CM_compare_FC$strataCode <- factor(CM_compare_FC$strataCode, levels = c("LT", "MT", "HT"))
-
-
-```
-
-
-```{r fig.width=12, fig.height=10}
-
-pp <- ggplot(CM_compare_FC, aes(label, Cover))
-pp + geom_boxplot(position=position_dodge(1), aes(fill=source), outlier.size = 0.3) +
-  labs(x="", y="Cover %") + 
-  scale_colour_brewer(palette = "Blues", aesthetics = 'fill') + 
-  facet_grid(countryCode~strataCode) + 
-  theme_pubclean(base_size=14)
+BC_FGHR <- data.frame(Country=character(), Site=character(), Strata=character(), BC=numeric())
+for (i in 1:nrow(CM_FG_Human)){
+  robotIndex <- which(CM_FG_Robot$Name==CM_FG_Human$Name[i])
+  if (length(robotIndex) > 0 ){
+    CM_one <- bind_rows(CM_FG_Human[i,6:nLabels], CM_FG_Robot[robotIndex,6:nLabels])
+    CM_one[is.na(CM_one)] <- 0
+    BC_FGHR <- bind_rows(BC_FGHR, 
+                    data.frame(Country = CM_FG_Human$country[i],
+                               Site = CM_FG_Human$site[i],
+                               Strata = CM_FG_Human$strata[i],
+                               BC = as.numeric(vegdist(CM_one, na.rm = T))))
+  }else {
+    print(paste0("NOT FOUND in Robot: ", CM_FG_Human$Name[i]))
+  }
+}
+BC_FGHR$Site <- recode_factor(BC_FGHR$Site, PC="Punta Cuevas", PE="Punta Este", PL="Punta Lobos", 
+                            LM="La Mancora", LV="La Ventana", PV="Playa Verde", 
+                            CD="Charles Darwin Station", RA="Ratonera", TO="Tortuga Bay", 
+                            MAMH="MAMH", MAPH="MAPH", MECH="MECH", MEGS="MEGS")
+BC_FGHR$Strata <- factor(BC_FGHR$Strata, levels = c("LT", "MT", "HT"), labels = c("LOWTIDE", "MIDTIDE", "HIGHTIDE"))
+BC_FGHR$Country <- factor(BC_FGHR$Country, levels = c("AR", "CO", "EC", "US"), labels = c("ARGENTINA", "COLOMBIA", "ECUADOR", "USA"))
 
 ```
 
 
-Let's apply a nested model to test if there is difference between the cover estimates from human and robot for each label
+PLOTs
 
 ```{r}
-model <- glmer(Cover/100 ~ source + label +  (1|countryCode:siteCode:strataCode), data=CM_compare, family=binomial)
+pp_ARG <- ggplot(BC_FGHR %>% filter(Country=="ARGENTINA"), aes(Strata, BC))
+pp_ARG <- pp_ARG + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", outlier.size = 0.3, lwd=0.2) + 
+  ylim(0,0.6) +
+  scale_color_manual(values = strataColor, aesthetics = 'fill') + 
+  labs(title="ARGENTINA", x="", y="Bray-Curtis distance") +
+  facet_grid(~Site) + 
+  theme_pubclean() + 
+  theme(legend.position = 'none')
+
+pp_COL <- ggplot(BC_FGHR %>% filter(Country=="COLOMBIA"), aes(Strata, BC))
+pp_COL <- pp_COL + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", outlier.size = 0.3, lwd=0.2) + 
+  ylim(0,0.6) + 
+  scale_color_manual(values = strataColor, aesthetics = 'fill') + 
+  labs(title="COLOMBIA", x="", y=" ") +
+  facet_grid(~Site) + 
+  theme_pubclean() + 
+  theme(legend.position = 'none')
+
+pp_ECU <- ggplot(BC_FGHR %>% filter(Country=="ECUADOR"), aes(Strata, BC))
+pp_ECU <- pp_ECU + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", outlier.size = 0.3, lwd=0.2) + 
+  ylim(0,0.6) + 
+  scale_color_manual(values = strataColor, aesthetics = 'fill') + 
+  labs(title="ECUADOR", x="", y="Bray-Curtis distance") +
+  facet_grid(~Site) + 
+  theme_pubclean() + 
+  theme(legend.position = 'none')
+
+pp_USA <- ggplot(BC_FGHR %>% filter(Country=="USA"), aes(Strata, BC))
+pp_USA <- pp_USA + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", outlier.size = 0.3, lwd=0.2) + 
+  ylim(0,0.6) + 
+  scale_color_manual(values = strataColor, aesthetics = 'fill') + 
+  labs(title="USA", x="", y=" ") +
+  facet_grid(~Site) + 
+  theme_pubclean() + 
+  theme(legend.position = 'none')
+
+(pp_ARG + pp_COL) / (pp_ECU + pp_USA)
 ```
+
+
+Let's try another version
+
+```{r}
+pp <- ggplot(BC_FGHR, aes(Country, BC, fill=Strata))
+pp + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", position=position_dodge2(preserve="single") , outlier.size = 0.3, lwd=0.2) + 
+  scale_color_manual(values = strataColor, aesthetics = 'fill') + 
+  ylim(0, 0.3) + 
+  facet_grid(~Strata) + 
+  theme_pubclean()
+
+```
+
+
+GMM model 
+
+```{r}
+BC_FGHR <- BC_FGHR %>% group_by(Country, Site, Strata) %>% mutate(Quadrat = seq_len(n()))
+
+
+model = glmer(BC ~ Country + Strata + Country*Strata + (1|Site/Quadrat), data=BC_FGHR, family=binomial)
+summary(model)
+
+testStrata = glht(model, linfct = mcp("Strata" = "Tukey"))
+summary(testStrata)
+plot(confint(testStrata), cex=0.5)
+
+testCountry = glht(model, linfct = mcp("Country" = "Tukey"))
+summary(testCountry)
+plot(confint(testCountry))
+```
+
+```{r}
+BCmean <- round(mean(BC_FGHR$BC),3)
+BCn <- nrow(BC_FGHR)
+BCsd <- sd(BC_FGHR$BC)
+BCmargin <- qt(0.975,df=BCn-1)*BCsd/sqrt(BCn)
+BCupper <- round(BCmean + BCmargin, 3)
+BClower <- round(BCmean - BCmargin, 3) 
+
+```
+
+AS demonstrated, the classifier is insensitive to the variability produced by Country, Site and Strata, being equally efficient no matter the source of the quadrat. **In general, the difference between the classifier and the visual estimate of the photocuadrat cover of a mean quadrat is `r BCmean` with a 95% confidence interval of [`r BClower` - `r BCupper`]**
+
+
+
+
+
+### Visual vs Robot
+
+```{r}
+DF_FG_VisualRobot <- read_csv(file.path(cleandataDir, "DF_FG_VisualRobot.csv"), col_types = cols())
+
+CM_FG_Visual <- DF_FG_VisualRobot %>% filter(source=='visual') %>% 
+  pivot_wider(names_from = 'Label', values_from = 'Cover')
+
+CM_FG_Robot <- DF_FG_VisualRobot %>% filter(source=='robot') %>% 
+  pivot_wider(names_from = 'Label', values_from = 'Cover')
+
+```
+
+
+Calculate Bray-Curtis
+
+```{r}
+## calculate BC index
+nLabels <- ncol(CM_FG_Visual)
+
+BC_FGVR <- data.frame(Country=character(), Site=character(), Strata=character(), BC=numeric())
+for (i in 1:nrow(CM_FG_Visual)){
+  robotIndex <- which(CM_FG_Robot$Name==CM_FG_Visual$Name[i])
+  if (length(robotIndex) > 0 ){
+    CM_one <- bind_rows(CM_FG_Visual[i,6:nLabels], CM_FG_Robot[robotIndex,6:nLabels])
+    CM_one[is.na(CM_one)] <- 0
+    BC_FGVR <- bind_rows(BC_FGVR, 
+                    data.frame(Country = CM_FG_Visual$country[i],
+                               Site = CM_FG_Visual$site[i],
+                               Strata = CM_FG_Visual$strata[i],
+                               BC = as.numeric(vegdist(CM_one, na.rm = T))))
+  }else {
+    print(paste0("NOT FOUND in Robot: ", CM_FG_Visual$Name[i]))
+  }
+}
+BC_FGVR$Site <- recode_factor(BC_FGVR$Site, PC="Punta Cuevas", PE="Punta Este", PL="Punta Lobos", 
+                            LM="La Mancora", LV="La Ventana", PV="Playa Verde", 
+                            CD="Charles Darwin Station", RA="Ratonera", TO="Tortuga Bay", 
+                            MAMH="MAMH", MAPH="MAPH", MECH="MECH", MEGS="MEGS")
+BC_FGVR$Strata <- factor(BC_FGVR$Strata, levels = c("LT", "MT", "HT"), labels = c("LOWTIDE", "MIDTIDE", "HIGHTIDE"))
+BC_FGVR$Country <- factor(BC_FGVR$Country, levels = c("AR", "CO", "EC"), labels = c("ARGENTINA", "COLOMBIA", "ECUADOR"))
+
+```
+
+
+PLOTs
+
+```{r}
+pp_ARG <- ggplot(BC_FGVR %>% filter(Country=="ARGENTINA"), aes(Strata, BC))
+pp_ARG <- pp_ARG + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", outlier.size = 0.3, lwd=0.2) + 
+  ylim(0,0.6) +
+  scale_color_manual(values = strataColor, aesthetics = 'fill') + 
+  labs(title="ARGENTINA", x="", y="Bray-Curtis distance") +
+  facet_grid(~Site) + 
+  theme_pubclean() + 
+  theme(legend.position = 'none')
+
+pp_COL <- ggplot(BC_FGVR %>% filter(Country=="COLOMBIA"), aes(Strata, BC))
+pp_COL <- pp_COL + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", outlier.size = 0.3, lwd=0.2) + 
+  ylim(0,0.6) + 
+  scale_color_manual(values = strataColor, aesthetics = 'fill') + 
+  labs(title="COLOMBIA", x="", y=" ") +
+  facet_grid(~Site) + 
+  theme_pubclean() + 
+  theme(legend.position = 'none')
+
+pp_ECU <- ggplot(BC_FGVR %>% filter(Country=="ECUADOR"), aes(Strata, BC))
+pp_ECU <- pp_ECU + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", outlier.size = 0.3, lwd=0.2) + 
+  ylim(0,0.6) + 
+  scale_color_manual(values = strataColor, aesthetics = 'fill') + 
+  labs(title="ECUADOR", x="", y="Bray-Curtis distance") +
+  facet_grid(~Site) + 
+  theme_pubclean() + 
+  theme(legend.position = 'none')
+
+pp_ARG / pp_COL / pp_ECU
+```
+
+
+Let's try another version
+
+```{r}
+pp <- ggplot(BC_FGVR, aes(Country, BC, fill=Strata))
+pp + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", position=position_dodge2(preserve="single") , outlier.size = 0.3, lwd=0.2) + 
+  scale_color_manual(values = strataColor, aesthetics = 'fill') + 
+  ylim(0, 0.3) + 
+  facet_grid(~Strata) + 
+  theme_pubclean()
+
+```
+
+
+GML model 
+
+By STRATUM
+
+HIGHTIDE 
+
+```{r}
+BC_FGVR <- BC_FGVR %>% group_by(Country, Site, Strata) %>% mutate(Quadrat = seq_len(n()))
+
+
+model = glm(BC ~ Country, data=BC_FGVR, subset = Strata=="HIGHTIDE", family=binomial)
+summary(model)
+
+testCountry = glht(model, linfct = mcp("Country" = "Tukey"))
+summary(testCountry)
+plot(confint(testCountry))
+```
+
+
+MIDTIDE 
+
+```{r}
+model = glm(BC ~ Country, data=BC_FGVR, subset = Strata=="MIDTIDE", family=binomial)
+summary(model)
+
+testCountry = glht(model, linfct = mcp("Country" = "Tukey"))
+summary(testCountry)
+plot(confint(testCountry))
+```
+
+LOWTIDE
+
+
+```{r}
+model = glm(BC ~ Country, data=BC_FGVR, subset = Strata=="LOWTIDE", family=binomial)
+summary(model)
+
+testCountry = glht(model, linfct = mcp("Country" = "Tukey"))
+summary(testCountry)
+plot(confint(testCountry))
+```
+
+
+
+```{r}
+BCmean <- round(mean(BC_FGVR$BC),3)
+BCn <- nrow(BC_FGVR)
+BCsd <- sd(BC_FGVR$BC)
+BCmargin <- qt(0.975,df=BCn-1)*BCsd/sqrt(BCn)
+BCupper <- round(BCmean + BCmargin, 3)
+BClower <- round(BCmean - BCmargin, 3) 
+
+```
+
+AS demonstrated, the classifier is insensitive to the variability produced by Country, Site and Strata, being equally efficient no matter the source of the quadrat. **In general, the difference between the classifier and the visual estimate of the community cover of a mean quadrat is `r BCmean` with a 95% confidence interval of [`r BClower` - `r BCupper`]**
+
+
+
 
