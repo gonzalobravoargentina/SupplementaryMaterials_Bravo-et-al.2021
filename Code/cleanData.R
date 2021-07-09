@@ -135,7 +135,7 @@ write_csv(dfVisual, file.path(outDir, "CM_visual.csv"))
 ## pick labels and common labels
 labelsRobot <- colnames(dfRobot)[6:ncol(dfRobot)]
 labelsHuman <- colnames(dfHuman)[6:ncol(dfHuman)]
-labelsVisual <- colnames(dfHuman)[6:ncol(dfVisual)]
+labelsVisual <- colnames(dfVuman)[6:ncol(dfVisual)]
 
 labelsHumRob <- intersect(labelsHuman, labelsRobot)
 labelsVisRob <- intersect(labelsVisual, labelsRobot)
