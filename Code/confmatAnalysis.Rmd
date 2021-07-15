@@ -133,7 +133,15 @@ colnames(tt) <- tblLabels[1:nLabels]
 
 cmm =confusionMatrix(tt)
 cmm$byClass
-sort(cmm$byClass[,11])
+
+
+## traspose and clean
+rNames <- gsub("Class: ", "", rownames(cmm$byClass))
+rownames(cmm$byClass) <- rNames
+
+kable(as.data.frame(round(t(cmm$byClass), 3))[c(1:5,11),]) %>% kable_styling("striped")
+
+
 
 ```
 
@@ -210,6 +218,13 @@ colnames(tt) <- tblLabels[1:nLabels]
 cmm =confusionMatrix(tt)
 cmm$byClass
 sort(cmm$byClass[,11])
+
+## traspose and clean
+rNames <- gsub("Class: ", "", rownames(cmm$byClass))
+rownames(cmm$byClass) <- rNames
+
+kable(as.data.frame(round(t(cmm$byClass), 3))[c(1:5,11),]) %>% kable_styling("striped")
+
 ```
 
 The confusion matrix in numbers:
