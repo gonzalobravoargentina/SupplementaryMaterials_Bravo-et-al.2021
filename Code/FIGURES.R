@@ -20,10 +20,10 @@ DF_HR$country <- factor(DF_HR$country, levels = c("AR", "CO", "EC", "US"),labels
 ## Cover ~strata faceted by country and label. mean and sd calculated using log of Cover+1
 pp <- ggplot(DF_HR %>% filter(Label %in% selectedLabels), aes(strata, Cover, fill=source))
 pp <- pp + geom_boxplot(position=position_dodge2(preserve = "single"), aes(fill=source), outlier.size = 0.3, notch = FALSE) +
-  labs(x="Stratum", y="Cover % (log10)") + 
+  labs(x="Stratum", y="Cover %") + 
   scale_y_log10() + 
   scale_x_discrete(breaks=c("HT", "MT", "LT"), labels=c("H", "M", "L")) + 
-  scale_colour_manual("Source", values = sourceColor, aesthetics = 'fill') + 
+  scale_colour_manual("", values = sourceColor, aesthetics = 'fill') + 
   facet_grid(country~Label) + 
   theme_pubclean(base_size=14)
 
@@ -45,12 +45,13 @@ selectedLabels <- c("CRB", "MOB", "SC", "MAF", "MAEN", "MAA", "MAS", "MAEC")
 sourceColor <- c(VQ="#f7fcb9", PQ.human="#addd8e", PQ.robot="#31a354")
 
 ## Cover ~strata faceted by country and label. mean and sd calculated using log of Cover+1
+
 pp <- ggplot(DF_VR %>% filter(Label %in% selectedLabels, country != "USA"), aes(strata, Cover, fill=source))
 pp <- pp + geom_boxplot(position=position_dodge2(preserve="single"), aes(fill=source), outlier.size = 0.3, notch = FALSE, width=0.7) +
-  labs(x="Stratum", y="Cover % (log10)") + 
+  labs(x="Stratum", y="Cover %") + 
   scale_y_log10() + 
-  scale_x_discrete(breaks=c("HT", "MT", "LT"), labels=c("H", "M", "L")) + 
-  scale_colour_manual("Source", values = sourceColor, aesthetics = 'fill') + 
+   scale_x_discrete(breaks=c("HT", "MT", "LT"), labels=c("H", "M", "L")) + 
+  scale_colour_manual("", values = sourceColor, aesthetics = 'fill') + 
   facet_grid(country~Label) + 
   theme_pubclean(base_size=14)
 pp
