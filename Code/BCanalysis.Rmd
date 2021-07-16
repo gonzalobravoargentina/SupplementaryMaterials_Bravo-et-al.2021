@@ -203,6 +203,18 @@ BCsummary <- BC_RH %>% group_by(Strata) %>%
             BCmax = max(BC))
 
 kable(BCsummary, digits=3, caption = "All labels: HUMAN vs ROBOT") %>% kable_styling("striped")
+
+
+BCsummaryGlobal <- BC_RH %>% 
+  summarise(BCmean = mean(BC),
+            BCsd = sd(BC), 
+            BCq25 = quantile(BC, 0.25),
+            BCq50 = quantile(BC, 0.50),
+            BCq74 = quantile(BC, 0.75),
+            BCmin = min(BC),
+            BCmax = max(BC))
+
+kable(BCsummaryGlobal, digits=3, caption = "All Labels: HUMAN vs ROBOT global BC stats") %>% kable_styling("striped")
 ```
 
 
@@ -391,6 +403,17 @@ BCsummary <- BC_VR %>% group_by(Strata) %>%
             BCmax = max(BC))
 
 kable(BCsummary, digits=3, caption = "All labels: VISUAL vs. ROBOT") %>% kable_styling("striped")
+
+BCsummaryGlobal <- BC_VR %>% 
+  summarise(BCmean = mean(BC),
+            BCsd = sd(BC), 
+            BCq25 = quantile(BC, 0.25),
+            BCq50 = quantile(BC, 0.50),
+            BCq74 = quantile(BC, 0.75),
+            BCmin = min(BC),
+            BCmax = max(BC))
+
+kable(BCsummaryGlobal, digits=3, caption = "All Labels: VISUAL vs ROBOT global BC stats") %>% kable_styling("striped")
 ```
 
 
@@ -500,6 +523,18 @@ BCsummary <- BC_VR995 %>% group_by(Strata) %>%
             BCmax = max(BC))
 
 kable(BCsummary, digits=3, caption = "All labels: VISUAL vs. ROBOT") %>% kable_styling("striped")
+
+## global stats
+BCsummaryGlobal <- BC_VR995 %>% 
+  summarise(BCmean = mean(BC),
+            BCsd = sd(BC), 
+            BCq25 = quantile(BC, 0.25),
+            BCq50 = quantile(BC, 0.50),
+            BCq74 = quantile(BC, 0.75),
+            BCmin = min(BC),
+            BCmax = max(BC))
+
+kable(BCsummaryGlobal, digits=3, caption = "95% Labels: VISUAL vs ROBOT global BC stats") %>% kable_styling("striped")
 ```
 
 
@@ -685,6 +720,18 @@ BCsummary <- BC_FGHR %>% group_by(Strata) %>%
             BCmax = max(BC))
 
 kable(BCsummary, digits=3, caption = "Functional groups: HUMAN vs. ROBOT") %>% kable_styling("striped")
+
+## global stats
+BCsummaryGlobal <- BC_FGHR %>% 
+  summarise(BCmean = mean(BC),
+            BCsd = sd(BC), 
+            BCq25 = quantile(BC, 0.25),
+            BCq50 = quantile(BC, 0.50),
+            BCq74 = quantile(BC, 0.75),
+            BCmin = min(BC),
+            BCmax = max(BC))
+
+kable(BCsummaryGlobal, digits=3, caption = "Functional groups: Human vs Robot global BC stats") %>% kable_styling("striped")
 ```
 
 
@@ -837,6 +884,20 @@ BCsummary <- BC_FGVR %>% group_by(Strata) %>%
             BCmax = max(BC))
 
 kable(BCsummary, digits=3, caption = "Functional groups: VISUAL vs. ROBOT") %>% kable_styling("striped")
+
+
+## global stats
+BCsummaryGlobal <- BC_FGVR %>% 
+  summarise(BCmean = mean(BC),
+            BCsd = sd(BC), 
+            BCq25 = quantile(BC, 0.25),
+            BCq50 = quantile(BC, 0.50),
+            BCq74 = quantile(BC, 0.75),
+            BCmin = min(BC),
+            BCmax = max(BC))
+
+kable(BCsummaryGlobal, digits=3, caption = "Functional groups: VISUAL vs ROBOT global BC stats") %>% kable_styling("striped")
+
 ```
 
 
