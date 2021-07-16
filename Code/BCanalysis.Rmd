@@ -190,6 +190,22 @@ BC_RH$Strata <- recode_factor(BC_RH$Strata, LT="LOWTIDE", MT="MIDTIDE", HT="HIGH
 
 ```
 
+Summarise the BS distances by groups
+
+```{r}
+BCsummary <- BC_RH %>% group_by(Strata) %>% 
+  summarise(BCmean = mean(BC),
+            BCsd = sd(BC), 
+            BCq25 = quantile(BC, 0.25),
+            BCq50 = quantile(BC, 0.50),
+            BCq74 = quantile(BC, 0.75), 
+            BCmin = min(BC), 
+            BCmax = max(BC))
+
+kable(BCsummary, digits=3, caption = "All labels: HUMAN vs ROBOT") %>% kable_styling("striped")
+```
+
+
 Plot the BC distances by strata and country:
 
 ```{r}
@@ -253,6 +269,7 @@ pp <- ggplot(BC_RH, aes(Country, BC, fill=Strata))
 pp + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", position=position_dodge2(preserve="single") , outlier.size = 0.3, lwd=0.2) + 
   scale_color_manual(values = strataColor, aesthetics = 'fill') + 
   ylim(0, 0.3) + 
+  labs(x="", y="Bray-Curtis Distance") + 
   facet_grid(~Strata) + 
   theme_pubclean() + 
   theme(legend.position = 'none')
@@ -361,6 +378,21 @@ BC_VR$Country <- factor(BC_VR$Country, levels = c("AR", "CO", "EC"), labels = c(
 
 ```
 
+Summarise the BS distances by groups
+
+```{r}
+BCsummary <- BC_VR %>% group_by(Strata) %>% 
+  summarise(BCmean = mean(BC),
+            BCsd = sd(BC), 
+            BCq25 = quantile(BC, 0.25),
+            BCq50 = quantile(BC, 0.50),
+            BCq74 = quantile(BC, 0.75),
+            BCmin = min(BC),
+            BCmax = max(BC))
+
+kable(BCsummary, digits=3, caption = "All labels: VISUAL vs. ROBOT") %>% kable_styling("striped")
+```
+
 
 
 ```{r, fig.height=12}
@@ -455,6 +487,24 @@ BC_VR995$Strata <- factor(BC_VR995$Strata, levels = c("LT", "MT", "HT"), labels 
 BC_VR995$Country <- factor(BC_VR995$Country, levels = c("AR", "CO", "EC"), labels = c("ARGENTINA", "COLOMBIA", "ECUADOR"))
 ```
 
+Summarise the BS distances by groups
+
+```{r}
+BCsummary <- BC_VR995 %>% group_by(Strata) %>% 
+  summarise(BCmean = mean(BC),
+            BCsd = sd(BC), 
+            BCq25 = quantile(BC, 0.25),
+            BCq50 = quantile(BC, 0.50),
+            BCq74 = quantile(BC, 0.75),
+            BCmin = min(BC),
+            BCmax = max(BC))
+
+kable(BCsummary, digits=3, caption = "All labels: VISUAL vs. ROBOT") %>% kable_styling("striped")
+```
+
+
+
+
 ```{r, fig.height=12}
 pp_ARG <- ggplot(BC_VR995 %>% filter(Country=="ARGENTINA"), aes(Strata, BC))
 pp_ARG <- pp_ARG + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", outlier.size = 0.3, lwd=0.2) + 
@@ -496,6 +546,7 @@ pp <- ggplot(BC_VR995, aes(Country, BC, fill=Strata))
 pp + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", position=position_dodge2(preserve="single") , outlier.size = 0.3, lwd=0.2) + 
   scale_color_manual(values = strataColor, aesthetics = 'fill') + 
   ylim(0, 0.3) + 
+  labs(x="", y="Bray-Curtis Distance") + 
   facet_grid(~Strata) + 
   theme_pubclean() + 
   theme(legend.position = 'none')
@@ -621,6 +672,22 @@ BC_FGHR$Country <- factor(BC_FGHR$Country, levels = c("AR", "CO", "EC", "US"), l
 
 ```
 
+Summarise the BS distances by groups
+
+```{r}
+BCsummary <- BC_FGHR %>% group_by(Strata) %>% 
+  summarise(BCmean = mean(BC),
+            BCsd = sd(BC), 
+            BCq25 = quantile(BC, 0.25),
+            BCq50 = quantile(BC, 0.50),
+            BCq74 = quantile(BC, 0.75),
+            BCmin = min(BC),
+            BCmax = max(BC))
+
+kable(BCsummary, digits=3, caption = "Functional groups: HUMAN vs. ROBOT") %>% kable_styling("striped")
+```
+
+
 
 PLOTs
 
@@ -672,6 +739,7 @@ pp <- ggplot(BC_FGHR, aes(Country, BC, fill=Strata))
 pp + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", position=position_dodge2(preserve="single") , outlier.size = 0.3, lwd=0.2) + 
   scale_color_manual(values = strataColor, aesthetics = 'fill') + 
   ylim(0, 0.3) + 
+  labs(x="", y="Bray-Curtis Distance") + 
   facet_grid(~Strata) + 
   theme_pubclean()
 
@@ -756,6 +824,21 @@ BC_FGVR$Country <- factor(BC_FGVR$Country, levels = c("AR", "CO", "EC"), labels 
 
 ```
 
+Summarise the BS distances by groups
+
+```{r}
+BCsummary <- BC_FGVR %>% group_by(Strata) %>% 
+  summarise(BCmean = mean(BC),
+            BCsd = sd(BC), 
+            BCq25 = quantile(BC, 0.25),
+            BCq50 = quantile(BC, 0.50),
+            BCq74 = quantile(BC, 0.75),
+            BCmin = min(BC),
+            BCmax = max(BC))
+
+kable(BCsummary, digits=3, caption = "Functional groups: VISUAL vs. ROBOT") %>% kable_styling("striped")
+```
+
 
 PLOTs
 
@@ -798,6 +881,7 @@ pp <- ggplot(BC_FGVR, aes(Country, BC, fill=Strata))
 pp + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", position=position_dodge2(preserve="single") , outlier.size = 0.3, lwd=0.2) + 
   scale_color_manual(values = strataColor, aesthetics = 'fill') + 
   ylim(0, 0.3) + 
+  labs(x="", y="Bray-Curtis Distance") + 
   facet_grid(~Strata) + 
   theme_pubclean()
 
