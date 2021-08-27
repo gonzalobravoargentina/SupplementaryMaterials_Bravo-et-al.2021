@@ -951,12 +951,39 @@ pp + geom_boxplot(width=0.5, aes(fill=Strata), colour="black", position=position
 
 GML model 
 
+
+
+
+```{r}
+## prepare data
+BC_FGVR <- BC_FGVR %>% group_by(Country, Site, Strata) %>% mutate(Quadrat = seq_len(n()))
+
+```
+
+
+Full model
+
+```{r}
+model = glm(BC ~ Country*Strata, data=BC_FGVR, family=binomial)
+summary(model)
+
+testCountry = glht(model, linfct = mcp("Country" = "Tukey"))
+summary(testCountry)
+plot(confint(testCountry))
+
+testCountry = glht(model, linfct = mcp("Strata" = "Tukey"))
+summary(testCountry)
+plot(confint(testCountry))
+```
+
+
+
+
 By STRATUM
 
 HIGHTIDE 
 
 ```{r}
-BC_FGVR <- BC_FGVR %>% group_by(Country, Site, Strata) %>% mutate(Quadrat = seq_len(n()))
 
 
 model = glm(BC ~ Country, data=BC_FGVR, subset = Strata=="HIGHTIDE", family=binomial)
