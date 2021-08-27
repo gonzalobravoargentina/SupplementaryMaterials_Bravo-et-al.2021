@@ -747,6 +747,8 @@ CM_compare_FC$countryCode <- str_sub(CM_compare_FC$Name,1,2)
 CM_compare_FC$siteCode <- ifelse(CM_compare_FC$countryCode=='US', str_sub(CM_compare_FC$Name,3,6),str_split(CM_compare_FC$Name, "_", simplify = T)[,3] )
 CM_compare_FC$strataCode <- ifelse(CM_compare_FC$countryCode=='US', str_split(CM_compare_FC$Name, "_", simplify = T)[,3],
                             str_split(CM_compare_FC$Name, "_", simplify = T)[,4])
+CM_compare_FC$strataCode[CM_compare_FC$strataCode=='high'] <- "HT"
+CM_compare_FC$strataCode[CM_compare_FC$strataCode=='low'] <- "LT"
 
 
 # CM_compare_FC$countryCode <- str_split(CM_compare_FC$Name, "_", simplify = T)[,1]
