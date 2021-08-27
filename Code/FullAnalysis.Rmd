@@ -743,12 +743,15 @@ CM_Human_FC_long$source <- "human"
 
 CM_compare_FC <- bind_rows(CM_Visual_FC_long, CM_Robot_FC_long, CM_Human_FC_long)
 
+CM_compare_FC$countryCode <- str_sub(CM_compare_FC$Name,1,2)
+CM_compare_FC$siteCode <- ifelse(CM_compare_FC$countryCode=='US', str_sub(CM_compare_FC$Name,3,6),str_split(CM_compare_FC$Name, "_", simplify = T)[,3] )
+CM_compare_FC$strataCode <- ifelse(CM_compare_FC$countryCode=='US', str_split(CM_compare_FC$Name, "_", simplify = T)[,3],
+                            str_split(CM_compare_FC$Name, "_", simplify = T)[,4])
 
 
-
-CM_compare_FC$countryCode <- str_split(CM_compare_FC$Name, "_", simplify = T)[,1]
-CM_compare_FC$siteCode <- str_split(CM_compare_FC$Name, "_", simplify = T)[,3]
-CM_compare_FC$strataCode <- str_split(CM_compare_FC$Name, "_", simplify = T)[,4]
+# CM_compare_FC$countryCode <- str_split(CM_compare_FC$Name, "_", simplify = T)[,1]
+# CM_compare_FC$siteCode <- str_split(CM_compare_FC$Name, "_", simplify = T)[,3]
+# CM_compare_FC$strataCode <- str_split(CM_compare_FC$Name, "_", simplify = T)[,4]
 CM_compare_FC$strataCode <- factor(CM_compare_FC$strataCode, levels = c("LT", "MT", "HT"))
 
 
@@ -772,6 +775,9 @@ Let's apply a nested model to test if there is difference between the cover esti
 Robot vs Visual
 
 ```{r}
+
+CM_compare$Cover[is.na(CM_compare$Cover)] <- 0
+
 #model <- glmer(Cover/100 ~ source + label +  (1|countryCode:siteCode:strataCode), data=CM_compare, family=binomial)
 model <- glmer(Cover/100 ~ countryCode*source*label + (1|siteCode:strataCode), data=CM_compare, subset=source!='human' , family=binomial)
 summary(model)
