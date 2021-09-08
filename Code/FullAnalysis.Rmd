@@ -90,9 +90,13 @@ Proportion of the labels in the set
 df <- read.csv(file.path(dataDir, "annotations.csv"))
 dfHuman <- df %>% filter(Comments=='random')
 dfRobot <- df %>% filter(Comments=='robot')
+# dfSummary <- dfHuman %>% group_by(Label) %>% 
+#   summarise(nPoints = n(), Countries = paste0(unique(country), collapse = ", ")) %>% 
+#   mutate(Percent = round(100*nPoints/nrow(df),1)) %>% 
+#   arrange(-nPoints)
 dfSummary <- dfHuman %>% group_by(Label) %>% 
   summarise(nPoints = n(), Countries = paste0(unique(country), collapse = ", ")) %>% 
-  mutate(Percent = round(100*nPoints/nrow(df),1)) %>% 
+  mutate(Percent = round(100*nPoints/nrow(dfHuman),1)) %>% 
   arrange(-nPoints)
 dfSummary <- left_join(dfSummary, labelset[,c('Name', 'Short.Code')], by=c('Label'='Short.Code')) %>% 
   relocate(Name, Label, nPoints, Percent, Countries)
