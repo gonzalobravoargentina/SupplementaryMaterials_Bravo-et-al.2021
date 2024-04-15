@@ -1,5 +1,5 @@
 # CoralNet_MBON
- R codes and data files : "Machine learning applications to monitor marine Essential Biodiversity Variables of rocky shore communities"
+ R codes and data files : "Robots Versus Humans: Automated Annotation Accurately Quantifies Essential Ocean Variables of Rocky Intertidal Functional Groups and Habitat State"
 
  https://www.frontiersin.org/articles/10.3389/fmars.2021.691313/full 
 
