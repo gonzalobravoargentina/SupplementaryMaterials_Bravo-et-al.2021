@@ -1,6 +1,8 @@
 # CoralNet_MBON
  R codes and data files : "Machine learning applications to monitor marine Essential Biodiversity Variables of rocky shore communities"
 
+ https://www.frontiersin.org/articles/10.3389/fmars.2021.691313/full 
+
 ## Folders:
 
 #### Visual_quadrats 
